@@ -28,4 +28,8 @@
     <ProjectReference Include="..\BikeWorkshop.Application\BikeWorkshop.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Functions\OrderFunctions\" />
+  </ItemGroup>
+
 </Project>

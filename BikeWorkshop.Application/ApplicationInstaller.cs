@@ -1,8 +1,4 @@
-﻿using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.Register;
-using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.SignIn;
-using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.UpdatePassword;
-using BikeWorkshop.Domain.Entities;
-using FluentValidation;
+﻿using BikeWorkshop.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;

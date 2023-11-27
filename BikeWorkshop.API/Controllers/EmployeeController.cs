@@ -1,6 +1,8 @@
-﻿using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.Register;
+﻿using BikeWorkshop.Application.Functions.DTO;
+using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.Register;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.SignIn;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.UpdatePassword;
+using BikeWorkshop.Application.Functions.EmployeeFunctions.Queries.GetEmployees;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +18,13 @@ public class EmployeeController : ControllerBase
 	{
 		_mediator = mediator;
 	}
+	[HttpGet("getall")]
+	public async Task<ActionResult<List<EmployeeDto>>> GetAll()
+	{
+		var response = await _mediator.Send(new GetEmployeesQuery());
+		return Ok(response);
+	}
+
 
 	[HttpPost("register")]
 	public async Task<ActionResult> Register(RegisterEmployeeCommand command)

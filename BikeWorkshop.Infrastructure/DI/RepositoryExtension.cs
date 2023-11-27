@@ -9,6 +9,8 @@ internal static class RepositoryExtension
 	public static IServiceCollection AddRepositories(this IServiceCollection services)
 	{
 		services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+		services.AddScoped<IOrderRepository, OrderRepository>();
+		services.AddScoped<IClientDataRepository, ClientDataRepository>();
 		return services;
 	}
 }

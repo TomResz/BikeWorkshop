@@ -16,6 +16,7 @@ public static class InfrastructureInstaller
 		{
 			options.UseSqlServer(configuration.GetConnectionString("LocalDb"));
 		});
+		services.AddScoped<IShortIdService, ShortIdService>();	
 		services.AddScoped<IEmployeeSessionContext, EmployeeSessionContext>();
 		services.AddHttpContextAccessor();
 		services.AddJwtService(configuration);

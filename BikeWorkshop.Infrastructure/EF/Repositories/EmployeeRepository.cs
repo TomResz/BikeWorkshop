@@ -14,6 +14,13 @@ public class EmployeeRepository : IEmployeeRepository
 		_context = context;
 	}
 
+	public async Task<List<Employee>> GetAll()
+		=> await _context
+		.Employees
+		.Include(x=>x.Role)
+		.AsNoTracking()
+		.ToListAsync();
+
 	public async Task<Employee?> GetByEmail(string email)
 	{
 		return await _context

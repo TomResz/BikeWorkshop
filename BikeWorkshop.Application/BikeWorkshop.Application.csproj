@@ -16,10 +16,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Functions\EmployeeFunctions\Queries\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
 		<PackageReference Include="MediatR" Version="12.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.14" />

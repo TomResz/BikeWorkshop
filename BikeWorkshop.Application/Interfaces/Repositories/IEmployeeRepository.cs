@@ -7,4 +7,5 @@ public interface IEmployeeRepository
 	Task Register(Employee employee);
 	Task<Employee?> GetByEmail(string email);
 	Task Update(Employee employee);
+	Task<Employee?> GetById(Guid id);
 }

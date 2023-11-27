@@ -130,7 +130,7 @@ public class SignInCommandHandlerTests
 	}
 
 	[Fact]
-	public async Task Handle_WithUknownEmail_ThrowsNotFoundException()
+	public async Task Handle_WithUnknownEmail_ThrowsNotFoundException()
 	{
 		// Arranged
 		var signInCommand = new SignInCommand("test@example.com", "test");

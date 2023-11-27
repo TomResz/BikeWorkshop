@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.Register;
 
-public class RegisterEmployeeValidator
+internal class RegisterEmployeeValidator
     : AbstractValidator<RegisterEmployeeCommand>
 {
     public RegisterEmployeeValidator()

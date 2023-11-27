@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.SignIn;
 
-public class SignInCommandValidator : AbstractValidator<SignInCommand>
+internal class SignInCommandValidator : AbstractValidator<SignInCommand>
 {
     public SignInCommandValidator()
     {

@@ -1,5 +1,7 @@
-﻿using BikeWorkshop.Infrastructure.DI;
+﻿using BikeWorkshop.Application.Interfaces.Services;
+using BikeWorkshop.Infrastructure.DI;
 using BikeWorkshop.Infrastructure.EF.Context;
+using BikeWorkshop.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +16,7 @@ public static class InfrastructureInstaller
 		{
 			options.UseSqlServer(configuration.GetConnectionString("LocalDb"));
 		});
+		services.AddScoped<IEmployeeSessionContext, EmployeeSessionContext>();
 		services.AddHttpContextAccessor();
 		services.AddJwtService(configuration);
 		services.AddRepositories();

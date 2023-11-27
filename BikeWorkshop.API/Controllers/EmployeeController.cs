@@ -1,5 +1,6 @@
 ﻿using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.Register;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.SignIn;
+using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.UpdatePassword;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,4 +31,11 @@ public class EmployeeController : ControllerBase
 		return Ok(response.Token);
 	}
 
+	
+	[HttpPut("updatePassword")]
+	public async Task<ActionResult> UpdatePassword(UpdatePasswordCommand command)
+	{
+		await _mediator.Send(command);
+		return Ok();
+	}
 }

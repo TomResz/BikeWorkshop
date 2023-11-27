@@ -26,7 +26,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 	<ItemGroup>
-		<InternalsVisibleTo Include="BikeWorkshop.Application.Tests"/>
+		<InternalsVisibleTo Include="BikeWorkshop.Application.Tests" />
 	</ItemGroup>
 
 </Project>

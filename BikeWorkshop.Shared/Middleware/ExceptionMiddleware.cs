@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BikeWorkshop.Shared.MiddleWare;
 
@@ -23,25 +24,34 @@ public class ExceptionMiddleware : IMiddleware
 		}
 		catch (NotFoundException ex)
 		{
-			HandleException(context, ex, 404);
+			await HandleException(context, ex, 404);
 		}
 		catch (BadRequestException ex)
 		{
-			HandleException(context, ex, 400);
+			await HandleException(context, ex, 400);
+		}
+		catch(UnauthorizedException ex)
+		{
+			await HandleException(context, ex,401);
 		}
 		catch (Exception ex)
 		{
-			HandleException(context, ex, 500);
+			await HandleException(context, ex, 500);
 		}
 	}
 
-	private async void HandleException(HttpContext context, Exception ex, int statusCode)
+	private async Task HandleException(HttpContext context, Exception ex, int statusCode)
 	{
 		_logger.LogError($"{GetLogMessage(ex, statusCode)}");
 
 		context.Response.StatusCode = statusCode;
+		if (string.IsNullOrEmpty(ex.Message))
+		{
+			await context.Response.WriteAsync("");
+			return;
+		}
 
-		if (IsJson(ex.Message))
+		if ( IsJson(ex.Message))
 		{
 			await context.Response.WriteAsync(ex.Message);
 			return;
@@ -54,19 +64,21 @@ public class ExceptionMiddleware : IMiddleware
 	{
 		try
 		{
-			JsonConvert.DeserializeObject(value);
+			JToken.Parse(value);
 			return true;
 		}
-		catch (System.Text.Json.JsonException)
+		catch (JsonReaderException)
+		{
+			return false;
+		}
+		catch(Exception)
 		{
 			return false;
 		}
 	}
 
-	private string GetLogMessage(Exception ex, int statusCode)
-	{
-		return statusCode == 500
+	private string GetLogMessage(Exception ex, int statusCode) 
+		=> statusCode == 500
 			? $"Internal Server Error: {ex.Message}"
 			: $"Error {statusCode}: {ex.Message}";
-	}
 }

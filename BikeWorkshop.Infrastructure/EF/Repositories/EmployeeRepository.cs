@@ -22,6 +22,13 @@ public class EmployeeRepository : IEmployeeRepository
 			.FirstOrDefaultAsync(x => x.Email == email.ToLower());
 	}
 
+	public async Task<Employee?> GetById(Guid id)
+	{
+		return await _context.Employees
+			.Include(x => x.Role)
+			.FirstOrDefaultAsync(x => x.Id == id);
+	}
+
 	public async Task Register(Employee employee)
 	{
 		await _context 
@@ -30,8 +37,9 @@ public class EmployeeRepository : IEmployeeRepository
 		await _context.SaveChangesAsync();
 	}
 
-	public Task Update(Employee employee)
+	public async Task Update(Employee employee)
 	{
-		return Task.CompletedTask;
+		_context.Employees.Update(employee);
+		await _context.SaveChangesAsync();
 	}
 }

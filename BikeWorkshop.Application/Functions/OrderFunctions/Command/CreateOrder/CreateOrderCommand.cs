@@ -4,4 +4,4 @@ namespace BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateOrder;
 
 public sealed record CreateOrderCommand(
 	string Description,
-	Guid clientDataId) : IRequest;
+	Guid ClientDataId) : IRequest;

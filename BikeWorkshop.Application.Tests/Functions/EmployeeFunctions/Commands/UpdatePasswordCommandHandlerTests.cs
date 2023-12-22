@@ -82,6 +82,7 @@ public class UpdatePasswordCommandHandlerTests
 	{
 		// arrange
 		var command = new UpdatePasswordCommand("12345678", "");
+		_employeeSessionContextMock.Setup(x => x.GetEmployeeId()).Returns(() => Guid.NewGuid());
 		_validatorMock.Setup(s => s.ValidateAsync(command, CancellationToken.None))
 			.ReturnsAsync(new FluentValidation.Results.ValidationResult(new[]
 			{

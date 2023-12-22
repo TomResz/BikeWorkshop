@@ -1,6 +1,4 @@
-﻿using BikeWorkshop.Domain.Entities;
-
-namespace BikeWorkshop.Application.Functions.DTO;
+﻿namespace BikeWorkshop.Application.Functions.DTO;
 
 public class EmployeeDto
 {

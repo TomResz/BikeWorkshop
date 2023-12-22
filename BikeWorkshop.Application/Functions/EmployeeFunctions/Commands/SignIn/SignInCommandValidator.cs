@@ -11,5 +11,8 @@ internal class SignInCommandValidator : AbstractValidator<SignInCommand>
             .Cascade(CascadeMode.Stop)
             .EmailMustBeValid();
 
+        RuleFor(x=>x.Password) 
+            .Cascade(CascadeMode.Stop)
+            .PasswordMustBeValid();
     }
 }

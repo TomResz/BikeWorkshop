@@ -1,6 +1,8 @@
 ﻿using BikeWorkshop.Application.Interfaces.Repositories;
 using BikeWorkshop.Domain.Entities;
+using BikeWorkshop.Domain.Enums;
 using BikeWorkshop.Infrastructure.EF.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace BikeWorkshop.Infrastructure.EF.Repositories;
 
@@ -20,4 +22,24 @@ public class OrderRepository : IOrderRepository
 			.AddAsync(order);
 		await _context.SaveChangesAsync();
 	}
+	public async Task<List<Order>> GetAllActive()
+		=> await _context
+			.Orders
+			.Where(x => x.OrderStatusId == (int)Status.During)
+			.AsNoTracking()
+			.ToListAsync();
+
+	public async Task<List<Order>> GetAllCompleted()
+		=> await _context
+			.Orders
+			.Where(x => x.OrderStatusId == (int)Status.Completed)
+			.AsNoTracking()
+			.ToListAsync();
+	public async Task<List<Order>> GetAllRetrieved()
+		=> await _context
+			.Orders
+			.Where(x => x.OrderStatusId == (int)Status.Retrieved)
+			.AsNoTracking()
+			.ToListAsync();
+
 }

@@ -41,7 +41,7 @@ internal sealed class CreateOrderCommandHandler
 			Id = Guid.NewGuid(),
 			AddedDate = DateTime.UtcNow,
 			Description = request.Description,
-			ClientDataId = request.clientDataId,
+			ClientDataId = request.ClientDataId,
 			ShortUniqueId = _shortIdService.GetShortId(),
 			EmployeeId = employeeId,
 		};

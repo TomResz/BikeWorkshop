@@ -18,7 +18,7 @@ public class EmployeeController : ControllerBase
 	{
 		_mediator = mediator;
 	}
-	[HttpGet("getall")]
+	[HttpGet("get_all")]
 	public async Task<ActionResult<List<EmployeeDto>>> GetAll()
 	{
 		var response = await _mediator.Send(new GetEmployeesQuery());
@@ -41,10 +41,10 @@ public class EmployeeController : ControllerBase
 	}
 
 	
-	[HttpPut("updatePassword")]
+	[HttpPut("update_password")]
 	public async Task<ActionResult> UpdatePassword(UpdatePasswordCommand command)
 	{
 		await _mediator.Send(command);
-		return Ok();
+		return NoContent();
 	}
 }

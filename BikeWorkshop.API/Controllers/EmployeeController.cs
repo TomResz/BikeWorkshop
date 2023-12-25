@@ -18,31 +18,69 @@ public class EmployeeController : ControllerBase
 	{
 		_mediator = mediator;
 	}
+
+	/// <summary>
+	/// Retrieves a list of all employees.
+	/// </summary>
+	/// <returns> List of employees.
+	/// </returns>
+	/// <response code="200"></response>
 	[HttpGet("get_all")]
+	[ProducesResponseType(typeof(List<EmployeeDto>), StatusCodes.Status200OK)]
 	public async Task<ActionResult<List<EmployeeDto>>> GetAll()
 	{
 		var response = await _mediator.Send(new GetEmployeesQuery());
 		return Ok(response);
 	}
 
-
+	/// <summary>
+	/// Registers a new employee based on the provided command.
+	/// </summary>
+	/// <param name="command">The command containing information to register a new employee.<br></br>
+	/// <br>Role ID:</br>
+	/// <b>1</b>-Manager
+	/// <br><b>2</b> -Worker</br>
+	/// </param>
+	/// <response code="400">If data is invalid or email already exists.</response>
+	/// <response code="204">If employee is successfully created.</response>
 	[HttpPost("register")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 	public async Task<ActionResult> Register(RegisterEmployeeCommand command)
 	{
 		await _mediator.Send(command);
-		return Ok();
+		return NoContent();
 	}
 
+
+	/// <summary>
+	/// Logs in an employee based on the provided credentials.
+	/// </summary>
+	/// <param name="command">The command containing an email and password.</param>
+	/// <returns>The JWT token.</returns>
+	/// <response code="200">If email and password are correct.</response>
+	/// <response code="400">If email or password validation failed.</response>
+	/// <response code="404">If email or password authentication failed.</response>
 	[HttpPost("login")]
+	[ProducesResponseType(typeof(string),StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
 	public async Task<ActionResult<string>> Login(SignInCommand command)
 	{
 		var response = await _mediator.Send(command);
 		return Ok(response.Token);
 	}
 
-	
+	/// <summary>
+	/// Updates the password of the authenticated employee.
+	/// </summary>
+	/// <param name="command">The command containing the new password and password confirmation</param>
+	/// <response code="204">If password was changed.</response>
+	/// <response code="400">If password or confirmation password validation failed.</response>
 	[HttpPut("update_password")]
-	public async Task<ActionResult> UpdatePassword(UpdatePasswordCommand command)
+	[ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status204NoContent)]
+	public async Task<IActionResult> UpdatePassword(UpdatePasswordCommand command)
 	{
 		await _mediator.Send(command);
 		return NoContent();

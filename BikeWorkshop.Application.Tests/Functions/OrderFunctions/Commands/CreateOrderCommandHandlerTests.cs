@@ -12,14 +12,12 @@ public class CreateOrderCommandHandlerTests
 {
 	private readonly Mock<IOrderRepository> _orderRepositoryMock;
 	private readonly Mock<IEmployeeSessionContext> _employeeSessionContextMock;
-	private readonly Mock<IValidator<CreateOrderCommand>> _validatorMock;
 	private readonly Mock<IShortIdService> _shortIdServiceMock;
 
 	public CreateOrderCommandHandlerTests()
 	{
 		_orderRepositoryMock = new Mock<IOrderRepository>();
 		_employeeSessionContextMock = new Mock<IEmployeeSessionContext>();
-		_validatorMock = new Mock<IValidator<CreateOrderCommand>>();
 		_shortIdServiceMock = new Mock<IShortIdService>();
 
 	}
@@ -32,7 +30,6 @@ public class CreateOrderCommandHandlerTests
 			.Returns(() => null);
 		var handler = new CreateOrderCommandHandler(_orderRepositoryMock.Object,
 			_employeeSessionContextMock.Object,
-			_validatorMock.Object,
 			_shortIdServiceMock.Object);
 
 		var task = handler.Handle(command, CancellationToken.None);
@@ -47,11 +44,8 @@ public class CreateOrderCommandHandlerTests
 		var command = new CreateOrderCommand("New desc", Guid.NewGuid());
 		_employeeSessionContextMock.Setup(x => x.GetEmployeeId())
 			.Returns(() => Guid.NewGuid());
-		_validatorMock.Setup(x => x.ValidateAsync(command, CancellationToken.None))
-			.ReturnsAsync(new FluentValidation.Results.ValidationResult());
 		var handler = new CreateOrderCommandHandler(_orderRepositoryMock.Object,
 		_employeeSessionContextMock.Object,
-		_validatorMock.Object,
 		_shortIdServiceMock.Object);
 
 

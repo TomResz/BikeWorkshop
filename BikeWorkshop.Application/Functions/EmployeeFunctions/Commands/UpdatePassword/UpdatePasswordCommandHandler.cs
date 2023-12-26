@@ -13,17 +13,14 @@ internal class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordComm
 {
 	private readonly IEmployeeRepository _employeeRepository;
 	private readonly IEmployeeSessionContext _sessionContext;
-	private readonly IValidator<UpdatePasswordCommand> _validator;
 	private readonly IPasswordHasher<Employee> _passwordHasher;
 	public UpdatePasswordCommandHandler(
 		IEmployeeRepository employeeRepository,
 		IEmployeeSessionContext sessionContext,
-		IValidator<UpdatePasswordCommand> validator,
 		IPasswordHasher<Employee> passwordHasher)
 	{
 		_employeeRepository = employeeRepository;
 		_sessionContext = sessionContext;
-		_validator = validator;
 		_passwordHasher = passwordHasher;
 	}
 
@@ -31,11 +28,6 @@ internal class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordComm
 	{
 		var employeeId = _sessionContext.GetEmployeeId()
 				?? throw new UnauthorizedException("Unauthorized access!");
-		var resultOfVal = await _validator.ValidateAsync(request, cancellationToken);
-		if (!resultOfVal.IsValid)
-		{
-			throw new BadRequestException(resultOfVal.Errors.ToJsonString());
-		}
 
 		var employee = await _employeeRepository.GetById(employeeId);
 		if (employee is null)

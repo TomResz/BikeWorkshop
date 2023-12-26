@@ -13,12 +13,10 @@ namespace BikeWorkshop.Application.Tests.Functions.EmployeeFunctions.Commands;
 public class RegisterEmployeeCommandHandlerTests
 {
 	private readonly Mock<IEmployeeRepository> _employeeRepositoryMock;
-	private readonly Mock<IValidator<RegisterEmployeeCommand>> _validatorMock;
 	private readonly Mock<IPasswordHasher<Employee>> _passwordHasherMock;
 	public RegisterEmployeeCommandHandlerTests()
 	{
 		_employeeRepositoryMock = new();
-		_validatorMock = new();
 		_passwordHasherMock = new();
 	}
 
@@ -29,11 +27,8 @@ public class RegisterEmployeeCommandHandlerTests
 		var command = new RegisterEmployeeCommand("Tom", "Res", "tom@gmail.com", "123456789", "123456789", (int)Roles.Worker);
 		var handler = new RegisterEmployeeCommandHandler(
 			_employeeRepositoryMock.Object,
-			_validatorMock.Object,
 			_passwordHasherMock.Object);
 
-		_validatorMock.Setup(v => v.ValidateAsync(It.IsAny<RegisterEmployeeCommand>(), CancellationToken.None))
-			.ReturnsAsync(new ValidationResult());
 		_employeeRepositoryMock.Setup(repo => repo.GetByEmail(It.IsAny<string>()))
 			.ReturnsAsync((string email) => null);
 
@@ -49,40 +44,14 @@ public class RegisterEmployeeCommandHandlerTests
 		var command = new RegisterEmployeeCommand("Tom", "Res", "tom@gmail.com", "123456789", "123456789", (int)Roles.Worker);
 		var handler = new RegisterEmployeeCommandHandler(
 			_employeeRepositoryMock.Object,
-			_validatorMock.Object,
 			_passwordHasherMock.Object);
 
-		_validatorMock.Setup(v => v.ValidateAsync(It.IsAny<RegisterEmployeeCommand>(), CancellationToken.None))
-			.ReturnsAsync(new ValidationResult());
+
 		_employeeRepositoryMock.Setup(repo => repo.GetByEmail(It.IsAny<string>()))
 			.ReturnsAsync(new Employee());
 		// act
 		var task = handler.Handle(command, CancellationToken.None);
 		// assert 
 		await Assert.ThrowsAsync<BadRequestException>(() => task);
-	}
-	[Fact]
-	public async Task Handle_Should_ThrowException_When_InvalidCommand()
-	{
-		// arrange
-		var command = new RegisterEmployeeCommand("Tom", "Res", "tom!@@a@gmail.com", "123456789", "123456789", (int)Roles.Worker);
-		var handler = new RegisterEmployeeCommandHandler(
-			_employeeRepositoryMock.Object,
-			_validatorMock.Object,
-			_passwordHasherMock.Object);
-		var validationResult = new ValidationResult(new List<ValidationFailure>
-		{
-			new ValidationFailure("Email", "InvalidEmail"),
-		});
-
-		_validatorMock.Setup(v => v.ValidateAsync(It.IsAny<RegisterEmployeeCommand>(), CancellationToken.None))
-			.ReturnsAsync(validationResult);
-		_employeeRepositoryMock.Setup(repo => repo.GetByEmail(It.IsAny<string>()))
-			.ReturnsAsync((string email) => null);
-
-		// act
-		var task = handler.Handle(command, CancellationToken.None);
-		// assert 
-		await Assert.ThrowsAsync<BadRequestException>(()=>  task);
 	}
 }

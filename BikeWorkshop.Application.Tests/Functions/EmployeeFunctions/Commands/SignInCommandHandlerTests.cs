@@ -14,13 +14,11 @@ public class SignInCommandHandlerTests
 {
 	private readonly Mock<IEmployeeRepository> _repositoryMock;
 	private readonly Mock<IJwtService> _jwtServiceMock;
-	private readonly Mock<IValidator<SignInCommand>> _validatorMock;
 	private readonly Mock<IPasswordHasher<Employee>> _passwordHasherMock;
     public SignInCommandHandlerTests()
     {
         _repositoryMock = new Mock<IEmployeeRepository>();
 		_jwtServiceMock = new Mock<IJwtService>();
-		_validatorMock = new Mock<IValidator<SignInCommand>>();
 		_passwordHasherMock = new Mock<IPasswordHasher<Employee>>();
     }
 
@@ -52,13 +50,9 @@ public class SignInCommandHandlerTests
 
 		var signInCommand = new SignInCommand("test@example.com", "password");
 
-		_validatorMock.Setup(validator => validator.ValidateAsync(It.IsAny<SignInCommand>(), It.IsAny<CancellationToken>()))
-			.ReturnsAsync(new FluentValidation.Results.ValidationResult());
-
 		var signInCommandHandler = new SignInCommandHandler(
 			_repositoryMock.Object,
 			_jwtServiceMock.Object,
-			_validatorMock.Object,
 			_passwordHasherMock.Object
 		);
 
@@ -69,30 +63,6 @@ public class SignInCommandHandlerTests
 		Assert.NotNull(result);
 		Assert.Equal("mocked-token", result.Token);
 	}
-	[Fact]
-	public async Task Handle_WithValidationErrors_ThrowsBadRequestException()
-	{
-		// Arrange
-		var signInCommand = new SignInCommand("", "");
-
-		_validatorMock.Setup(validator => validator.ValidateAsync(It.IsAny<SignInCommand>(), It.IsAny<CancellationToken>()))
-			.ReturnsAsync(new FluentValidation.Results.ValidationResult(new[]{
-			new ValidationFailure("Email", "Email is required."),
-			new ValidationFailure("Password", "Password is required.")
-			}));
-		var signInCommandHandler = new SignInCommandHandler(
-			_repositoryMock.Object,
-			_jwtServiceMock.Object,
-			_validatorMock.Object,
-			_passwordHasherMock.Object
-			);
-		// Act
-		var resultTask =  signInCommandHandler.Handle(signInCommand, CancellationToken.None);
-
-		// Assert
-		await Assert.ThrowsAsync<BadRequestException>(()=> resultTask);
-	}
-
 
 	[Fact]
 	public async Task Handle_WithInvalidPassword_ThrowsNotFoundException()
@@ -108,9 +78,6 @@ public class SignInCommandHandlerTests
 
 		var hashed = _passwordHasherMock.Object.HashPassword(employee, "differentpassword");
 		employee.PasswordHash = hashed;
-
-		_validatorMock.Setup(repo => repo.ValidateAsync(It.IsAny<SignInCommand>(), It.IsAny<CancellationToken>()))
-			.ReturnsAsync(new ValidationResult());
 		
 		_repositoryMock.Setup(repo => repo.GetByEmail(It.IsAny<string>()))
 			.ReturnsAsync(employee);
@@ -119,7 +86,6 @@ public class SignInCommandHandlerTests
 		var signInCommandHandler = new SignInCommandHandler(
 				_repositoryMock.Object,
 				_jwtServiceMock.Object,
-				_validatorMock.Object,
 				_passwordHasherMock.Object
 				);
 		// Act
@@ -135,14 +101,12 @@ public class SignInCommandHandlerTests
 		// Arranged
 		var signInCommand = new SignInCommand("test@example.com", "test");
 
-		_validatorMock.Setup(repo => repo.ValidateAsync(It.IsAny<SignInCommand>(), It.IsAny<CancellationToken>()))
-			.ReturnsAsync(new ValidationResult());
+
 		_repositoryMock.Setup(repo => repo.GetByEmail(It.IsAny<string>()))
 			.ReturnsAsync((string email) => null);
 		var handler = new SignInCommandHandler(
 				_repositoryMock.Object,
 				_jwtServiceMock.Object,
-				_validatorMock.Object,
 				_passwordHasherMock.Object);
 		// Act
 		var resultTask = handler.Handle(signInCommand, default);

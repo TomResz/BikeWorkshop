@@ -47,7 +47,7 @@ public class OrderController : ControllerBase
 	/// </response>
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
-	[HttpGet("get_active/{direction:int}")]
+	[HttpGet("get_active/direction={direction:int}")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 	public async Task<ActionResult<List<OrderDto>>> GetAllCurrent([FromRoute]int direction)

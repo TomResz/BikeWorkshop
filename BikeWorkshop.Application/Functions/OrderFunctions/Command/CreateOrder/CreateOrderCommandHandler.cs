@@ -13,17 +13,14 @@ internal sealed class CreateOrderCommandHandler
 {
 	private readonly IOrderRepository _orderRepository;
 	private readonly IEmployeeSessionContext _employeeSessionContext;
-	private readonly IValidator<CreateOrderCommand> _validator;
 	private readonly IShortIdService _shortIdService;
 	public CreateOrderCommandHandler(
 		IOrderRepository orderRepository,
 		IEmployeeSessionContext employeeSessionContext,
-		IValidator<CreateOrderCommand> validator,
 		IShortIdService shortIdService)
 	{
 		_orderRepository = orderRepository;
 		_employeeSessionContext = employeeSessionContext;
-		_validator = validator;
 		_shortIdService = shortIdService;
 	}
 
@@ -31,11 +28,6 @@ internal sealed class CreateOrderCommandHandler
 	{
 		var employeeId = _employeeSessionContext.GetEmployeeId() ??
 			throw new UnauthorizedException(nameof(CreateOrderCommandHandler));
-		var resultOf = await _validator.ValidateAsync(request, cancellationToken);
-		if(!resultOf.IsValid) 
-		{
-			throw new BadRequestException(resultOf.Errors.ToJsonString());
-		}
 		var order = new Order
 		{
 			Id = Guid.NewGuid(),

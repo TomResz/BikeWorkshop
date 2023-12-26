@@ -11,25 +11,17 @@ namespace BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.Register
 internal class RegisterEmployeeCommandHandler : IRequestHandler<RegisterEmployeeCommand>
 {
     private readonly IEmployeeRepository _employeeRepository;
-    private readonly IValidator<RegisterEmployeeCommand> _validator;
     private readonly IPasswordHasher<Employee> _passwordHasher;
 	public RegisterEmployeeCommandHandler(
 		IEmployeeRepository employeeRepository,
-		IValidator<RegisterEmployeeCommand> validator,
 		IPasswordHasher<Employee> passwordHasher)
 	{
 		_employeeRepository = employeeRepository;
-		_validator = validator;
 		_passwordHasher = passwordHasher;
 	}
 
 	public async Task Handle(RegisterEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var resultOfVal = await _validator.ValidateAsync(request, cancellationToken);
-        if (!resultOfVal.IsValid)
-        {
-            throw new BadRequestException(resultOfVal.Errors.ToJsonString());
-        }
         var gettedByEmail = await _employeeRepository.GetByEmail(request.Email);
         if (gettedByEmail is not null)
         {

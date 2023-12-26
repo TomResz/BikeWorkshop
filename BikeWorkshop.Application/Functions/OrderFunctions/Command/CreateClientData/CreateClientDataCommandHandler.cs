@@ -10,23 +10,15 @@ namespace BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateClient
 internal sealed class CreateClientDataCommandHandler : IRequestHandler<CreateClientDataCommand, Guid>
 {
 	private readonly IClientDataRepository _clientDataRepository;
-	private readonly IValidator<CreateClientDataCommand> _validator;
 
 	public CreateClientDataCommandHandler(
-		IClientDataRepository clientDataRepository,
-		IValidator<CreateClientDataCommand> validator)
+		IClientDataRepository clientDataRepository)
 	{
 		_clientDataRepository = clientDataRepository;
-		_validator = validator;
 	}
 
 	public async Task<Guid> Handle(CreateClientDataCommand request, CancellationToken cancellationToken)
 	{
-		var valResult = await _validator.ValidateAsync(request, cancellationToken);
-		if (!valResult.IsValid)
-		{
-			throw new BadRequestException(valResult.Errors.ToJsonString());
-		}
 		var clientData = new ClientData
 		{
 			Id = Guid.NewGuid(),

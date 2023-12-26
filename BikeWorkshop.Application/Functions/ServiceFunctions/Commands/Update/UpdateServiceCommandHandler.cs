@@ -16,10 +16,6 @@ internal sealed class UpdateServiceCommandHandler
 
 	public async Task Handle(UpdateServiceCommand request, CancellationToken cancellationToken)
 	{
-		if (string.IsNullOrEmpty(request.Name))
-		{
-			throw new BadRequestException("Invalid name!");
-		}
 		var service = await _repository.GetById(request.ServiceId);
 		if (service is null) 
 		{ 

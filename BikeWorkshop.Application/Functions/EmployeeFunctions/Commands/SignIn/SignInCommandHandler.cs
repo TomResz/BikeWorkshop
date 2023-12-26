@@ -12,27 +12,19 @@ internal sealed class SignInCommandHandler : IRequestHandler<SignInCommand,SignI
 {
 	private readonly IEmployeeRepository _employeeRepository;
 	private readonly IJwtService _jwtService;
-	private readonly IValidator<SignInCommand> _validator;
 	private readonly IPasswordHasher<Employee> _passwordHasher;
 	public SignInCommandHandler(
 		IEmployeeRepository employeeRepository,
 		IJwtService jwtService,
-		IValidator<SignInCommand> validator,
 		IPasswordHasher<Employee> passwordHasher)
 	{
 		_employeeRepository = employeeRepository;
 		_jwtService = jwtService;
-		_validator = validator;
 		_passwordHasher = passwordHasher;
 	}
 
 	public async Task<SignInResponse> Handle(SignInCommand request, CancellationToken cancellationToken)
 	{
-		var result = await _validator.ValidateAsync(request, cancellationToken);
-		if(!result.IsValid)
-		{
-			throw new BadRequestException(result.ToString());
-		}
 		var employee = await _employeeRepository.GetByEmail(request.Email);
         if (employee is null)
         {

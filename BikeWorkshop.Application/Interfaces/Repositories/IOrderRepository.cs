@@ -8,4 +8,5 @@ public interface IOrderRepository
 	Task<List<Order>> GetAllRetrieved();
 	Task<List<Order>> GetAllCompleted();
 	Task<List<Order>> GetAllActive();
+	Task<Order?> GetById(Guid orderId);
 }

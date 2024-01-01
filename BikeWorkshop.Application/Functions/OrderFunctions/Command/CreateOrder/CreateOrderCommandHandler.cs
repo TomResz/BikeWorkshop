@@ -9,7 +9,7 @@ using MediatR;
 namespace BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateOrder;
 
 internal sealed class CreateOrderCommandHandler 
-	: IRequestHandler<CreateOrderCommand>
+	: IRequestHandler<CreateOrderCommand, CreateOrderResponse>
 {
 	private readonly IOrderRepository _orderRepository;
 	private readonly IEmployeeSessionContext _employeeSessionContext;
@@ -24,7 +24,7 @@ internal sealed class CreateOrderCommandHandler
 		_shortIdService = shortIdService;
 	}
 
-	public async Task Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+	public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
 	{
 		var employeeId = _employeeSessionContext.GetEmployeeId() ??
 			throw new UnauthorizedException(nameof(CreateOrderCommandHandler));
@@ -38,5 +38,6 @@ internal sealed class CreateOrderCommandHandler
 			EmployeeId = employeeId,
 		};
 		await _orderRepository.Add(order);
+		return new(order.Id, order.ShortUniqueId, order.AddedDate);
 	}
 }

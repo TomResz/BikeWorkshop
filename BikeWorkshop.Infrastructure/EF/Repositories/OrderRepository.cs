@@ -42,4 +42,8 @@ public class OrderRepository : IOrderRepository
 			.AsNoTracking()
 			.ToListAsync();
 
+	public async Task<Order?> GetById(Guid orderId)
+		=> await _context
+		.Orders
+		.FirstOrDefaultAsync(x=>x.Id == orderId);	
 }

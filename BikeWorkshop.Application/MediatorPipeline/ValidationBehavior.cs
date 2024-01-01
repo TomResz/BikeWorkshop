@@ -18,20 +18,23 @@ public sealed class ValidationBehavior<TRequest, TResponse>
 		RequestHandlerDelegate<TResponse> next,
 		CancellationToken cancellationToken)
 	{
-		var context = new ValidationContext<TRequest>(request);
-
-		var validationFailures = await Task.WhenAll(
-			_validators.Select(validator => validator.ValidateAsync(context)));
-
-		if (validationFailures.Any())
+		if (_validators.Any())
 		{
-			var errors = validationFailures
-				.Where(validationResult => !validationResult.IsValid)
-				.SelectMany(validationResult => validationResult.Errors)
-				.ToList();
-			if (errors.Any())
+			var context = new ValidationContext<TRequest>(request);
+
+			var validationFailures = await Task.WhenAll(
+				_validators.Select(validator => validator.ValidateAsync(context)));
+
+			if (validationFailures.Any())
 			{
-				throw new BadRequestException(errors.ToJsonString());
+				var errors = validationFailures
+					.Where(validationResult => !validationResult.IsValid)
+					.SelectMany(validationResult => validationResult.Errors)
+					.ToList();
+				if (errors.Any())
+				{
+					throw new BadRequestException(errors.ToJsonString());
+				}
 			}
 		}
 		return await next();

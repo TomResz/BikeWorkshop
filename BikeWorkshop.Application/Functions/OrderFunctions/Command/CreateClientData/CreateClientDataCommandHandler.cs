@@ -7,7 +7,7 @@ using MediatR;
 
 namespace BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateClientData;
 
-internal sealed class CreateClientDataCommandHandler : IRequestHandler<CreateClientDataCommand, Guid>
+internal sealed class CreateClientDataCommandHandler : IRequestHandler<CreateClientDataCommand, ClientData>
 {
 	private readonly IClientDataRepository _clientDataRepository;
 
@@ -17,7 +17,7 @@ internal sealed class CreateClientDataCommandHandler : IRequestHandler<CreateCli
 		_clientDataRepository = clientDataRepository;
 	}
 
-	public async Task<Guid> Handle(CreateClientDataCommand request, CancellationToken cancellationToken)
+	public async Task<ClientData> Handle(CreateClientDataCommand request, CancellationToken cancellationToken)
 	{
 		var clientData = new ClientData
 		{
@@ -26,6 +26,6 @@ internal sealed class CreateClientDataCommandHandler : IRequestHandler<CreateCli
 			PhoneNumber = request.PhoneNumber,
 		};
 		await _clientDataRepository.Add(clientData);
-		return clientData.Id;
+		return clientData;
 	}
 }

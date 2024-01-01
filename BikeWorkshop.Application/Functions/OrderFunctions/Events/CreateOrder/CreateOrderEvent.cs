@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateOrder;
+using MediatR;
 
 namespace BikeWorkshop.Application.Functions.OrderFunctions.Events.CreateOrder;
 

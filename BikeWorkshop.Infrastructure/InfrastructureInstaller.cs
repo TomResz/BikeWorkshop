@@ -21,6 +21,7 @@ public static class InfrastructureInstaller
 		services.AddHttpContextAccessor();
 		services.AddJwtService(configuration);
 		services.AddRepositories();
+		services.AddSMTPClient(configuration);
 		return services;
 	}
 }

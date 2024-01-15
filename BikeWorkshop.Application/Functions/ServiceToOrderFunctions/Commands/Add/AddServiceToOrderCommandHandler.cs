@@ -39,7 +39,7 @@ internal sealed class AddServiceToOrderCommandHandler
 		var service = await _serviceRepository.GetById(request.ServiceId);
 		if(service is null)
 		{
-			throw new BadRequestException($"Service with {request.ServiceId} was not found!");
+			throw new NotFoundException($"Service with {request.ServiceId} was not found!");
 		}
 
 		var serviceToOrder = new ServiceToOrder

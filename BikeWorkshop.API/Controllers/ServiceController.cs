@@ -101,7 +101,7 @@ public class ServiceController : ControllerBase
 	/// <param name="command">The command specifying service UID and new name.</param>
 	/// <returns>
 	/// </returns>
-	/// <response code="204">If service is successfully deleted.</response>
+	/// <response code="204">If service was successfully deleted.</response>
 	/// <response code="400">If service with provided ID doesn't exists.</response>
 	/// <response code="404">If service with provided name exists or command data is invalid.</response>
 	[HttpPut("update")]

@@ -5,4 +5,7 @@ namespace BikeWorkshop.Application.Interfaces.Repositories;
 public interface IServiceToOrderRepository
 {
 	Task Add(ServiceToOrder serviceToOrder);
+	Task Delete(ServiceToOrder serviceToOrder);
+	Task<ServiceToOrder?> GetById(Guid serviceToOrderId);
+	Task<List<ServiceToOrder>> GetByOrderId(Guid orderId);
 }

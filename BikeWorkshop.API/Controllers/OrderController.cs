@@ -3,6 +3,8 @@ using BikeWorkshop.Application.Functions.DTO.Enums;
 using BikeWorkshop.Application.Functions.OrderFunctions.Events.CreateOrder;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetActual;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetCompleted;
+using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetPageOfCurrents;
+using BikeWorkshop.Application.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -87,5 +89,13 @@ public class OrderController : ControllerBase
 		var query = new GetCompletedOrderQuery((SortingDirection)direction);
 		var orders = await _mediator.Send(query);
 		return Ok(orders);
+	}
+
+	[HttpGet("current")]
+	public async Task<ActionResult<PagedList<OrderDto>>> GetCurrentPage([FromQuery]int page,[FromQuery]int pageSize)
+	{
+		var query = new GetPageOfCurrentsOrdersQuery(page, pageSize);
+		var response = await _mediator.Send(query);
+		return Ok(response);
 	}
 }

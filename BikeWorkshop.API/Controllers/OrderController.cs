@@ -91,6 +91,12 @@ public class OrderController : ControllerBase
 		return Ok(orders);
 	}
 
+	/// <summary>
+	/// Returns page of current orders.
+	/// </summary>
+	/// <param name="page">Number of page</param>
+	/// <param name="pageSize">Size of page</param>
+	[ProducesResponseType(typeof(PagedList<OrderDto>),StatusCodes.Status200OK)]
 	[HttpGet("current")]
 	public async Task<ActionResult<PagedList<OrderDto>>> GetCurrentPage([FromQuery]int page,[FromQuery]int pageSize)
 	{

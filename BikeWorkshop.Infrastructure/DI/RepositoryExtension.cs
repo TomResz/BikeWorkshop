@@ -7,12 +7,12 @@ namespace BikeWorkshop.Infrastructure.DI;
 internal static class RepositoryExtension
 {
 	public static IServiceCollection AddRepositories(this IServiceCollection services)
-	{
-		services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-		services.AddScoped<IOrderRepository, OrderRepository>();
-		services.AddScoped<IClientDataRepository, ClientDataRepository>();
-		services.AddScoped<IServiceRepository, ServiceRepository>();
-		services.AddScoped<IServiceToOrderRepository,ServiceToOrderRepository>();
-		return services;
-	}
+		=> 
+		services.AddScoped<IEmployeeRepository, EmployeeRepository>()
+			.AddScoped<IOrderRepository, OrderRepository>()
+			.AddScoped<IClientDataRepository, ClientDataRepository>()
+			.AddScoped<IServiceRepository, ServiceRepository>()
+			.AddScoped<IServiceToOrderRepository,ServiceToOrderRepository>()
+			.AddScoped<ISummaryRepository,SummaryRepository>();
+
 }

@@ -38,4 +38,12 @@ public class ServiceToOrderRepository
 		.Where(x=>x.OrderId == orderId)
 		.AsNoTracking()
 		.ToListAsync();
+
+	public async Task<List<ServiceToOrder>> GetServiceDetailsByOrderId(Guid orderId)
+		=> await _dbContext
+		.ServiceToOrders
+		.AsNoTracking()
+		.Include(x => x.Service)
+		.Where(x => x.OrderId == orderId)
+		.ToListAsync();
 }

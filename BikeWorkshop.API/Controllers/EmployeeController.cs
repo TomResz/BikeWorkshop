@@ -4,6 +4,7 @@ using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.SignIn;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.UpdatePassword;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Queries.GetEmployees;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeWorkshop.API.Controllers;
@@ -26,6 +27,7 @@ public class EmployeeController : ControllerBase
 	/// </returns>
 	/// <response code="200"></response>
 	[HttpGet("get_all")]
+	[Authorize(Roles = "Manager")]
 	[ProducesResponseType(typeof(List<EmployeeDto>), StatusCodes.Status200OK)]
 	public async Task<ActionResult<List<EmployeeDto>>> GetAll()
 	{

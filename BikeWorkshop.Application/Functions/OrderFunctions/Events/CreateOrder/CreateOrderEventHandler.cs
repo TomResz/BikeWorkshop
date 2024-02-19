@@ -1,5 +1,4 @@
-﻿using BikeWorkshop.Application.Email.Contents;
-using BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateClientData;
+﻿using BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateClientData;
 using BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateOrder;
 using BikeWorkshop.Application.Interfaces.Repositories;
 using BikeWorkshop.Application.Interfaces.Services;
@@ -12,11 +11,17 @@ internal sealed class CreateOrderEventHandler : IRequestHandler<CreateOrderEvent
 	private readonly IMediator _mediator;
 	private readonly IClientDataRepository _clientDataRepository;
 	private readonly ICustomEmailSender _customEmailSender;
-	public CreateOrderEventHandler(IMediator mediator, IClientDataRepository clientDataRepository, ICustomEmailSender customEmailSender)
+	private readonly ICreateOrderEmailContent _createOrderEmailContent;
+	public CreateOrderEventHandler(
+		IMediator mediator,
+		IClientDataRepository clientDataRepository,
+		ICustomEmailSender customEmailSender,
+		ICreateOrderEmailContent createOrderEmailContent)
 	{
 		_mediator = mediator;
 		_clientDataRepository = clientDataRepository;
 		_customEmailSender = customEmailSender;
+		_createOrderEmailContent = createOrderEmailContent;
 	}
 
 	public async Task Handle(CreateOrderEvent @event, CancellationToken cancellationToken)
@@ -36,8 +41,7 @@ internal sealed class CreateOrderEventHandler : IRequestHandler<CreateOrderEvent
 		var (orderId,shortId,addedDate) = orderResponse;
 		if(@event.Email is not null)
 		{
-			var emailContent = new CreateOrderEmailContent();
-			var content = emailContent.Content("www.google.com",shortId);
+			var content = _createOrderEmailContent.Content("www.google.com",shortId);
 			await _customEmailSender.SendEmailAsync(@event.Email, "Order has been already created!", content);
 		}
 	}

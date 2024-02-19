@@ -12,13 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocSettings();
 
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication();
-builder.Services.AddShared();
+builder.Services.AddInfrastructure(builder.Configuration)
+	.AddApplication()
+	.AddShared();
 
 builder.Host.UseSerilog((context, configuration) =>
 	configuration.WriteTo.Console()
 	.MinimumLevel.Information());
+
 AnsiConsole.Write(new FigletText("BikeWorkshop API")
 	.LeftJustified()
 	.Color(Color.Green));

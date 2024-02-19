@@ -1,6 +1,8 @@
-﻿namespace BikeWorkshop.Application.Email.Contents;
+﻿using BikeWorkshop.Application.Interfaces.Services;
 
-internal sealed class CreateOrderEmailContent
+namespace BikeWorkshop.Application.Email.Contents;
+
+internal sealed class CreateOrderEmailContent : ICreateOrderEmailContent
 {
 	public string Content(string url,string shortId)
         => $@"

@@ -14,12 +14,14 @@ public class CreateOrderEventHandlerTests
 	private readonly Mock<IMediator> _mockMediator;
 	private readonly Mock<IClientDataRepository> _mockClientDataRepository;
     private readonly Mock<ICustomEmailSender> _mockCustomEmailSender;
+	private readonly Mock<ICreateOrderEmailContent> _mockCreateOrderEmailContent;
 
     public CreateOrderEventHandlerTests()
     {
         _mockClientDataRepository = new();
         _mockMediator = new();
         _mockCustomEmailSender = new Mock<ICustomEmailSender>();
+		_mockCreateOrderEmailContent = new();
     }
 
 
@@ -47,7 +49,7 @@ public class CreateOrderEventHandlerTests
 				PhoneNumber = @event.PhoneNumber
 			});
 		var handler = new CreateOrderEventHandler(_mockMediator.Object, _mockClientDataRepository.Object
-			, _mockCustomEmailSender.Object);
+			, _mockCustomEmailSender.Object, _mockCreateOrderEmailContent.Object);
 		// act
 		await handler.Handle(@event, CancellationToken.None);
 
@@ -78,7 +80,7 @@ public class CreateOrderEventHandlerTests
 		_mockClientDataRepository.Setup(rep => rep.GetByPhoneNumberOrEmail(It.IsAny<string>(), It.IsAny<string>()))
 			.ReturnsAsync(clientData);
 		var handler = new CreateOrderEventHandler(_mockMediator.Object, _mockClientDataRepository.Object,
-			_mockCustomEmailSender.Object);
+			_mockCustomEmailSender.Object, _mockCreateOrderEmailContent.Object);
 
         _mockMediator.Setup(x => x.Send(It.IsAny<CreateOrderCommand>(),CancellationToken.None))
             .ReturnsAsync(() => new (expectedOrderId, expectedShortId, expectedAddedDate));

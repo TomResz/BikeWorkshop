@@ -26,4 +26,13 @@ public class ClientDataRepository : IClientDataRepository
 		=> await _context.ClientData
 		.FirstOrDefaultAsync(x => x.Email == email 
 							|| x.PhoneNumber == phoneNumber);
+
+	public async Task<string?> GetEmailByOrderId(Guid orderId)
+		=> await _context
+		.Orders
+		.Include(x => x.ClientData)
+		.AsNoTracking()
+		.Where(x => x.Id == orderId)
+		.Select(x => x.ClientData.Email)
+		.FirstOrDefaultAsync();
 }

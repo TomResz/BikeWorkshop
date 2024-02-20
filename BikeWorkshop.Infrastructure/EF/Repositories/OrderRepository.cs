@@ -47,6 +47,12 @@ public class OrderRepository : IOrderRepository
 		.Orders
 		.FirstOrDefaultAsync(x=>x.Id == orderId);
 
+	public async Task<Order?> GetByShortId(string shortId)
+		=> await _context
+		.Orders
+		.Include(x=>x.Summary)
+		.AsNoTracking()
+		.FirstOrDefaultAsync(x=>x.ShortUniqueId ==  shortId);
 	public async Task Update(Order order)
 	{
 		_context.Orders.Update(order);

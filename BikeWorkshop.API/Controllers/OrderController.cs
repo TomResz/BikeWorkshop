@@ -1,10 +1,10 @@
 ﻿using BikeWorkshop.API.QueryPoliticy;
 using BikeWorkshop.Application.Functions.DTO;
-using BikeWorkshop.Application.Functions.DTO.Enums;
 using BikeWorkshop.Application.Functions.OrderFunctions.Command.RetrieveOrder;
 using BikeWorkshop.Application.Functions.OrderFunctions.Events.CreateOrder;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetActual;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetCompleted;
+using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetOrderHistoryByShortUniqueId;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetPageOfCurrents;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetRetrieved;
 using BikeWorkshop.Application.Pagination;
@@ -45,7 +45,7 @@ public class OrderController : ControllerBase
 	/// <param name="direction">
 	/// Sorting direction:<br></br>
 	/// <b>asc</b>-Ascending
-	/// <br><b>dsc</b>-Descending</br>
+	/// <br><b>desc</b>-Descending</br>
 	/// </param>
 	/// <returns>List of current orders.</returns>
 	/// <response code="200"> If sorting direction is correct.
@@ -69,7 +69,7 @@ public class OrderController : ControllerBase
 	/// <param name="direction">
 	/// Sorting direction:<br></br>
 	/// <b>asc</b>-Ascending
-	/// <br><b>dsc</b>-Descending</br>
+	/// <br><b>desc</b>-Descending</br>
 	/// </param>
 	/// <returns>List of completed orders.</returns>
 	/// <response code="200"> If sorting direction is correct.
@@ -92,7 +92,7 @@ public class OrderController : ControllerBase
 	/// <param name="direction">
 	/// Sorting direction:<br></br>
 	/// <b>asc</b>-Ascending
-	/// <br><b>dsc</b>-Descending</br>
+	/// <br><b>desc</b>-Descending</br>
 	/// </param>
 	/// <returns>List of completed orders.</returns>
 	/// <response code="200"> If sorting direction is correct.
@@ -112,8 +112,6 @@ public class OrderController : ControllerBase
 	/// <summary>
 	/// Returns page of current orders.
 	/// </summary>
-	/// <param name="page">Number of page</param>
-	/// <param name="pageSize">Size of page</param>
 	[ProducesResponseType(typeof(PagedList<OrderDto>),StatusCodes.Status200OK)]
 	[HttpGet("current")]
 	public async Task<ActionResult<PagedList<OrderDto>>> GetCurrentPage([FromQuery]PageParameters parameters)
@@ -132,5 +130,12 @@ public class OrderController : ControllerBase
 	{
 		await _mediator.Send(command);
 		return Ok();
+	}
+
+	[HttpGet("search/{shortId}")]
+	public async Task<ActionResult<OrderHistoryDto>> GetByShortId(string shortId)
+	{
+		var orderHistory = await _mediator.Send(new GetOrderHistoryByShortUniqueIdQuery(shortId));
+		return Ok(orderHistory);
 	}
 }

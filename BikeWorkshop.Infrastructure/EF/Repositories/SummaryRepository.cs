@@ -22,6 +22,11 @@ internal class SummaryRepository : ISummaryRepository
 	public async Task<Summary?> GetByOrderId(Guid orderId)
 		=> await _context
 		.Summaries
-		.AsNoTracking()
 		.FirstOrDefaultAsync(x=>x.OrderId == orderId);
+
+	public async Task Update(Summary summary)
+	{
+		_context.Summaries.Update(summary);
+		await _context.SaveChangesAsync();
+	}
 }

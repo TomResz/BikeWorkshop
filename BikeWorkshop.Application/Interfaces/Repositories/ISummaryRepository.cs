@@ -5,4 +5,5 @@ public interface ISummaryRepository
 {
 	Task Add(Summary summary);
 	Task<Summary?> GetByOrderId(Guid orderId);
+	Task Update(Summary summary);
 }

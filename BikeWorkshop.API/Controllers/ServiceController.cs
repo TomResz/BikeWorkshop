@@ -1,5 +1,5 @@
-﻿using BikeWorkshop.Application.Functions.DTO;
-using BikeWorkshop.Application.Functions.DTO.Enums;
+﻿using BikeWorkshop.API.QueryPoliticy;
+using BikeWorkshop.Application.Functions.DTO;
 using BikeWorkshop.Application.Functions.ServiceFunctions.Commands.Add;
 using BikeWorkshop.Application.Functions.ServiceFunctions.Commands.Delete;
 using BikeWorkshop.Application.Functions.ServiceFunctions.Commands.Update;
@@ -39,27 +39,24 @@ public class ServiceController : ControllerBase
 
 
 	/// <summary>
-	/// Retrieves a sorted list of services in ascending order.
+	/// Retrieves a sorted list of services.
 	/// </summary>
+	/// <param name="direction">
+	/// Sorting direction:<br></br>
+	/// <b>asc</b>-Ascending
+	/// <br><b>dsc</b>-Descending</br>
+	/// </param>
+	/// <returns>List of current orders.</returns>
+	/// <response code="200"> If sorting direction is correct.
+	/// </response>
+	/// <response code="400"> If sorting direction is invalid.
+	/// </response>
 	/// <returns>Sorted list of services.</returns>
-	[HttpGet("get_all/ascending")]
+	[HttpGet("get_all/{direction}")]
 	[ProducesResponseType(typeof(List<ServiceDto>),StatusCodes.Status200OK)]
-	public async Task<ActionResult<List<ServiceDto>>> GetAllSortedAscending()
+	public async Task<ActionResult<List<ServiceDto>>> GetAllSortedAscending([FromRoute]string direction)
 	{
-		var response = await _mediator.Send(new GetAllServicesQuery(SortingDirection.Ascending));
-		return Ok(response);
-	}
-
-
-	/// <summary>
-	/// Retrieves a sorted list of services in descending order.
-	/// </summary>
-	/// <returns>Sorted list of services.</returns>
-	[HttpGet("get_all/descending")]
-	[ProducesResponseType(typeof(List<ServiceDto>), StatusCodes.Status200OK)]
-	public async Task<ActionResult<List<ServiceDto>>> GetAllSortedDescending()
-	{
-		var response = await _mediator.Send(new GetAllServicesQuery(SortingDirection.Descending));
+		var response = await _mediator.Send(new GetAllServicesQuery(SortingParameters.FromString(direction)));
 		return Ok(response);
 	}
 

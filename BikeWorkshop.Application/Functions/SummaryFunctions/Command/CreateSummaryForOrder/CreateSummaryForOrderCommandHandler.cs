@@ -1,4 +1,5 @@
 ﻿using BikeWorkshop.Application.Interfaces.Repositories;
+using BikeWorkshop.Application.Interfaces.Services;
 using BikeWorkshop.Domain.Entities;
 using BikeWorkshop.Domain.Enums;
 using BikeWorkshop.Shared.Exceptions;
@@ -11,21 +12,31 @@ internal sealed class CreateSummaryForOrderCommandHandler
 	private readonly IOrderRepository _orderRepository;
 	private readonly ISummaryRepository _summaryRepository;
 	private readonly IServiceToOrderRepository _serviceToOrderRepository;
+	private readonly IClientDataRepository _clientDataRepository;
+	private readonly ICustomEmailSender _customEmailSender;
+	private readonly ISummaryEmailContent _summaryEmailContent;
+
 	public CreateSummaryForOrderCommandHandler(
 		IOrderRepository orderRepository,
 		ISummaryRepository summaryRepository,
-		IServiceToOrderRepository serviceToOrderRepository)
+		IServiceToOrderRepository serviceToOrderRepository,
+		IClientDataRepository clientDataRepository,
+		ICustomEmailSender customEmailSender,
+		ISummaryEmailContent summaryEmailContent)
 	{
 		_orderRepository = orderRepository;
 		_summaryRepository = summaryRepository;
 		_serviceToOrderRepository = serviceToOrderRepository;
+		_clientDataRepository = clientDataRepository;
+		_customEmailSender = customEmailSender;
+		_summaryEmailContent = summaryEmailContent;
 	}
 
 	public async Task Handle(CreateSummaryForOrderCommand request, CancellationToken cancellationToken)
 	{
 		var order = await _orderRepository.GetById(request.OrderId)
 			?? throw new NotFoundException("Unknown order!");
-
+		var clientEmail = await _clientDataRepository.GetEmailByOrderId(request.OrderId);
 		if(order.OrderStatusId is not (int)Status.During)
 		{
 			throw new BadRequestException("This order has already ended!");
@@ -46,5 +57,9 @@ internal sealed class CreateSummaryForOrderCommandHandler
 		};
 		await _orderRepository.Update(order);
 		await _summaryRepository.Add(summary);
+		if(clientEmail is not null)
+		{
+			await _customEmailSender.SendEmailAsync(clientEmail, "Summary of order",_summaryEmailContent.Content(totalAmmount));
+		}
 	}
 }

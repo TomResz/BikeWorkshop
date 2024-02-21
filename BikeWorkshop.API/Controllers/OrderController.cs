@@ -1,9 +1,12 @@
-﻿using BikeWorkshop.Application.Functions.DTO;
-using BikeWorkshop.Application.Functions.DTO.Enums;
+﻿using BikeWorkshop.API.QueryPoliticy;
+using BikeWorkshop.Application.Functions.DTO;
+using BikeWorkshop.Application.Functions.OrderFunctions.Command.RetrieveOrder;
 using BikeWorkshop.Application.Functions.OrderFunctions.Events.CreateOrder;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetActual;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetCompleted;
+using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetOrderHistoryByShortUniqueId;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetPageOfCurrents;
+using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetRetrieved;
 using BikeWorkshop.Application.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -41,24 +44,20 @@ public class OrderController : ControllerBase
 	/// </summary>
 	/// <param name="direction">
 	/// Sorting direction:<br></br>
-	/// <b>1</b>-Ascending
-	/// <br><b>2</b>-Descending</br>
+	/// <b>asc</b>-Ascending
+	/// <br><b>desc</b>-Descending</br>
 	/// </param>
 	/// <returns>List of current orders.</returns>
 	/// <response code="200"> If sorting direction is correct.
 	/// </response>
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
-	[HttpGet("get_active/direction={direction:int}")]
+	[HttpGet("get_active/{direction}")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-	public async Task<ActionResult<List<OrderDto>>> GetAllCurrent([FromRoute]int direction)
+	public async Task<ActionResult<List<OrderDto>>> GetAllCurrent([FromRoute]string direction)
 	{
-		if (!Enum.IsDefined(typeof(SortingDirection), direction))
-		{
-			return BadRequest("Invalid direction ID!");
-		}
-		var query = new GetCurrentOrdersQuery((SortingDirection)direction);
+		var query = new GetCurrentOrdersQuery(SortingParameters.FromString(direction));
 		var orders = await _mediator.Send(query);
 		return Ok(orders);
 	}
@@ -69,39 +68,74 @@ public class OrderController : ControllerBase
 	/// </summary>
 	/// <param name="direction">
 	/// Sorting direction:<br></br>
-	/// <b>1</b>-Ascending
-	/// <br><b>2</b>-Descending</br>
+	/// <b>asc</b>-Ascending
+	/// <br><b>desc</b>-Descending</br>
 	/// </param>
 	/// <returns>List of completed orders.</returns>
 	/// <response code="200"> If sorting direction is correct.
 	/// </response>
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
-	[HttpGet("get_completed/{direction:int}")]
+	[HttpGet("get_completed/{direction}")]
 	[ProducesResponseType(typeof(List<OrderDto>),StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
-	public async Task<ActionResult<List<OrderDto>>> GetAllCompleted([FromRoute] int direction)
+	public async Task<ActionResult<List<OrderDto>>> GetAllCompleted([FromRoute] string direction)
 	{
-		if (!Enum.IsDefined(typeof(SortingDirection),direction))
-		{
-			return BadRequest("Invalid direction ID!");
-		}
-		var query = new GetCompletedOrderQuery((SortingDirection)direction);
+		var query = new GetCompletedOrderQuery(SortingParameters.FromString(direction));
 		var orders = await _mediator.Send(query);
 		return Ok(orders);
 	}
 
 	/// <summary>
+	/// Returns list of retrieved orders.
+	/// </summary>
+	/// <param name="direction">
+	/// Sorting direction:<br></br>
+	/// <b>asc</b>-Ascending
+	/// <br><b>desc</b>-Descending</br>
+	/// </param>
+	/// <returns>List of completed orders.</returns>
+	/// <response code="200"> If sorting direction is correct.
+	/// </response>
+	/// <response code="400"> If sorting direction is invalid.
+	/// </response>
+	[HttpGet("get_retrieved/{direction}")]
+	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
+	public async Task<ActionResult<List<OrderDto>>> GetAllRetrieved([FromRoute]string direction)
+	{
+		var query = new GetRetrievedOrdersQuery(SortingParameters.FromString(direction));
+		var orders = await _mediator.Send(query);
+		return Ok(orders);
+	}
+
+
+	/// <summary>
 	/// Returns page of current orders.
 	/// </summary>
-	/// <param name="page">Number of page</param>
-	/// <param name="pageSize">Size of page</param>
 	[ProducesResponseType(typeof(PagedList<OrderDto>),StatusCodes.Status200OK)]
 	[HttpGet("current")]
-	public async Task<ActionResult<PagedList<OrderDto>>> GetCurrentPage([FromQuery]int page,[FromQuery]int pageSize)
+	public async Task<ActionResult<PagedList<OrderDto>>> GetCurrentPage([FromQuery]PageParameters parameters)
 	{
-		var query = new GetPageOfCurrentsOrdersQuery(page, pageSize);
+		var query = new GetPageOfCurrentsOrdersQuery(parameters.Page, parameters.PageSize);
 		var response = await _mediator.Send(query);
 		return Ok(response);
+	}
+
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[HttpPatch("retrieve-order")]
+	public async Task<IActionResult> RetrieveOrder(RetrieveOrderCommand command)
+	{
+		await _mediator.Send(command);
+		return Ok();
+	}
+
+	[HttpGet("search/{shortId}")]
+	public async Task<ActionResult<OrderHistoryDto>> GetByShortId(string shortId)
+	{
+		var orderHistory = await _mediator.Send(new GetOrderHistoryByShortUniqueIdQuery(shortId));
+		return Ok(orderHistory);
 	}
 }

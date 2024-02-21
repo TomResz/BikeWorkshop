@@ -19,9 +19,16 @@ internal class SummaryRepository : ISummaryRepository
 		await _context.SaveChangesAsync();
 	}
 
+	public async Task Delete(Summary summary)
+	{
+		_context.Summaries.Remove(summary);
+		await _context.SaveChangesAsync();
+	}
+
 	public async Task<Summary?> GetByOrderId(Guid orderId)
 		=> await _context
 		.Summaries
+		.Include(x=>x.Order)
 		.FirstOrDefaultAsync(x=>x.OrderId == orderId);
 
 	public async Task Update(Summary summary)

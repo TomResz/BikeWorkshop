@@ -1,5 +1,6 @@
 ﻿using BikeWorkshop.Application.Functions.DTO;
 using BikeWorkshop.Application.Functions.SummaryFunctions.Command.CreateSummaryForOrder;
+using BikeWorkshop.Application.Functions.SummaryFunctions.Command.Delete;
 using BikeWorkshop.Application.Functions.SummaryFunctions.Queries.GetSummaryWithDetails;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,13 @@ public class SummaryController : ControllerBase
 
 	[HttpPost("create")]
 	public async Task<IActionResult> CreateSummary(CreateSummaryForOrderCommand command)
+	{
+		await _mediator.Send(command);
+		return NoContent();
+	}
+
+	[HttpDelete("delete")]
+	public async Task<IActionResult> Delete(DeleteSummaryCommand command)
 	{
 		await _mediator.Send(command);
 		return NoContent();

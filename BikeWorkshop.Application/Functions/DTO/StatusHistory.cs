@@ -1,6 +1,6 @@
 ﻿namespace BikeWorkshop.Application.Functions.DTO;
 
-public class StatusHistoryDto
+public class StatusHistory
 {
     public string Value { get; set; }
     public string Description { get; set; }

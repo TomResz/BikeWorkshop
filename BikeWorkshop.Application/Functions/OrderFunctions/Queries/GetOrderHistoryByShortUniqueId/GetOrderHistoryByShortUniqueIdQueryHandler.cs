@@ -21,9 +21,9 @@ internal sealed class GetOrderHistoryByShortUniqueIdQueryHandler
 		var order = await _orderRepository.GetByShortId(request.ShortUniqueId) ??
 			throw new NotFoundException("Unknown order unique Id!");
 
-		var orderHistoryList = new List<StatusHistoryDto>()
+		var orderHistoryList = new List<StatusHistory>()
 		{
-			new StatusHistoryDto()
+			new StatusHistory()
 			{
 				Date = order.AddedDate,
 				Value = "Order added.",
@@ -36,7 +36,7 @@ internal sealed class GetOrderHistoryByShortUniqueIdQueryHandler
 			case (int)Status.Retrieved:
 				{
 					orderHistoryList.Add(GetCompletedHistoryDto(order));
-					orderHistoryList.Add(new StatusHistoryDto()
+					orderHistoryList.Add(new StatusHistory()
 					{
 						Date = order.Summary.RetrievedDate,
 						Description = order.Summary.Conclusion ?? "",
@@ -64,8 +64,8 @@ internal sealed class GetOrderHistoryByShortUniqueIdQueryHandler
 			return Enum.GetName(typeof(Status), status) ?? throw new BadRequestException("Invalid status Id!");
 		throw new BadRequestException("Invalid status Id!");
 	}
-	private StatusHistoryDto GetCompletedHistoryDto(Order order)
-		=> new StatusHistoryDto()
+	private StatusHistory GetCompletedHistoryDto(Order order)
+		=> new StatusHistory()
 		{
 			Date = order.Summary.EndedDate,
 			Description = order.Summary.Conclusion ?? "",

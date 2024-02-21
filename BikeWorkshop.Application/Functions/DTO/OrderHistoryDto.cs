@@ -6,5 +6,5 @@ public class OrderHistoryDto
 	public string OrderName { get; set; }
 	public DateTime AddedDate { get; set; }
 	public string ActualStatus { get; set; }
-    public IEnumerable<StatusHistoryDto> StatusHistoryDtos { get; set; }
+    public IEnumerable<StatusHistory> StatusHistoryDtos { get; set; }
 }

@@ -8,10 +8,11 @@ internal class DeleteSummaryCommandHandler
 	: IRequestHandler<DeleteSummaryCommand>
 {
 	private readonly ISummaryRepository _summaryRepository;
-
-	public DeleteSummaryCommandHandler(ISummaryRepository summaryRepository)
+	private readonly IOrderRepository _orderRepository;
+	public DeleteSummaryCommandHandler(ISummaryRepository summaryRepository, IOrderRepository orderRepository)
 	{
 		_summaryRepository = summaryRepository;
+		_orderRepository = orderRepository;
 	}
 
 	public async Task Handle(DeleteSummaryCommand request, CancellationToken cancellationToken)
@@ -19,10 +20,12 @@ internal class DeleteSummaryCommandHandler
 		var summary = await _summaryRepository.GetByOrderId(request.OrderId)
 			?? throw new NotFoundException("Unknown order!");
 
-		if (summary.Order.OrderStatusId is (int)Status.Completed)
+		if (summary.Order.OrderStatusId is (int)Status.Retrieved)
 		{
 			throw new BadRequestException("You can't delete summary of completed order!");
 		}
+		summary.Order.OrderStatusId = (int)Status.During;
+		await _orderRepository.Update(summary.Order);
 		await _summaryRepository.Delete(summary);
 	}
 }

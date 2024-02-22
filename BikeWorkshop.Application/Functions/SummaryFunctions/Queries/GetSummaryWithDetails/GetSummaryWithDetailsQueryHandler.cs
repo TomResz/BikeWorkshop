@@ -19,19 +19,8 @@ internal class GetSummaryWithDetailsQueryHandler
 	public async Task<SummaryWithDetailsDto> Handle(GetSummaryWithDetailsQuery request, CancellationToken cancellationToken)
 	{
 		var order = await _summaryRepository.GetByOrderId(request.OrderId)
-			?? throw new BadRequestException("Unknown summary!");
+			?? throw new NotFoundException("Unknown summary!");
 		var services = await _serviceToOrderRepository.GetServiceDetailsByOrderId(request.OrderId);
-		return new SummaryWithDetailsDto
-		{
-			Conclusion = order.Conclusion,
-			EndedDate = order.EndedDate,
-			TotalPrice = order.TotalPrice,
-			ServiceDetails = services.Select(x => new ServiceDetailsDto
-			{
-				Count = x.Count,
-				Name = x.Service.Name,
-				Price = x.Price,
-			}).ToList()
-		};
+		return SummaryWithDetailsDto.Translate(order,services);
 	}
 }

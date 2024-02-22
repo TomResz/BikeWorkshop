@@ -1,11 +1,14 @@
 ﻿using BikeWorkshop.API.QueryPoliticy;
 using BikeWorkshop.Application.Functions.DTO;
+using BikeWorkshop.Application.Functions.DTO.Enums;
 using BikeWorkshop.Application.Functions.OrderFunctions.Command.RetrieveOrder;
 using BikeWorkshop.Application.Functions.OrderFunctions.Events.CreateOrder;
+using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GePageOfCompleted;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetActual;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetCompleted;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetOrderHistoryByShortUniqueId;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetPageOfCurrents;
+using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetPageOfRetrieved;
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetRetrieved;
 using BikeWorkshop.Application.Pagination;
 using MediatR;
@@ -55,7 +58,7 @@ public class OrderController : ControllerBase
 	[HttpGet("get_active/{direction}")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-	public async Task<ActionResult<List<OrderDto>>> GetAllCurrent([FromRoute]string direction)
+	public async Task<ActionResult<List<OrderDto>>> GetAllCurrent([FromRoute] string direction)
 	{
 		var query = new GetCurrentOrdersQuery(SortingParameters.FromString(direction));
 		var orders = await _mediator.Send(query);
@@ -77,8 +80,8 @@ public class OrderController : ControllerBase
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
 	[HttpGet("get_completed/{direction}")]
-	[ProducesResponseType(typeof(List<OrderDto>),StatusCodes.Status200OK)]
-	[ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 	public async Task<ActionResult<List<OrderDto>>> GetAllCompleted([FromRoute] string direction)
 	{
 		var query = new GetCompletedOrderQuery(SortingParameters.FromString(direction));
@@ -101,7 +104,7 @@ public class OrderController : ControllerBase
 	/// </response>
 	[HttpGet("get_retrieved/{direction}")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
-	public async Task<ActionResult<List<OrderDto>>> GetAllRetrieved([FromRoute]string direction)
+	public async Task<ActionResult<List<OrderDto>>> GetAllRetrieved([FromRoute] string direction)
 	{
 		var query = new GetRetrievedOrdersQuery(SortingParameters.FromString(direction));
 		var orders = await _mediator.Send(query);
@@ -112,9 +115,9 @@ public class OrderController : ControllerBase
 	/// <summary>
 	/// Returns page of current orders.
 	/// </summary>
-	[ProducesResponseType(typeof(PagedList<OrderDto>),StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(PagedList<OrderDto>), StatusCodes.Status200OK)]
 	[HttpGet("current")]
-	public async Task<ActionResult<PagedList<OrderDto>>> GetCurrentPage([FromQuery]PageParameters parameters)
+	public async Task<ActionResult<PagedList<OrderDto>>> GetCurrentPage([FromQuery] PageParameters parameters)
 	{
 		var query = new GetPageOfCurrentsOrdersQuery(parameters.Page, parameters.PageSize);
 		var response = await _mediator.Send(query);
@@ -137,5 +140,30 @@ public class OrderController : ControllerBase
 	{
 		var orderHistory = await _mediator.Send(new GetOrderHistoryByShortUniqueIdQuery(shortId));
 		return Ok(orderHistory);
+	}
+
+
+	[HttpGet("completed")]
+	public async Task<ActionResult<PagedList<OrderDto>>> GetPageOfCompleted([FromQuery] PageParameters parameters, [FromQuery] string? direction)
+	{
+		SortingDirection? sortingDirection = null;
+		if (direction is not null)
+		{
+			sortingDirection = SortingParameters.FromString(direction);
+		}
+		var orders = await _mediator.Send(new GetPageOfCompletedQuery(parameters.Page,parameters.PageSize));
+		return Ok(orders);
+	}
+
+	[HttpGet("retrieved")]
+	public async Task<ActionResult<PagedList<OrderDto>>> GetPageOfRetrieved([FromQuery] PageParameters parameters, [FromQuery] string? direction)
+	{
+		SortingDirection? sortingDirection = null;
+		if (direction is not null)
+		{
+			sortingDirection = SortingParameters.FromString(direction);
+		}
+		var orders = await _mediator.Send(new GetPageOfRetrievedOrdersQuery(parameters.Page, parameters.PageSize));
+		return Ok(orders);
 	}
 }

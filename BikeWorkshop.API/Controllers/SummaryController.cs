@@ -2,6 +2,7 @@
 using BikeWorkshop.Application.Functions.SummaryFunctions.Command.CreateSummaryForOrder;
 using BikeWorkshop.Application.Functions.SummaryFunctions.Command.Delete;
 using BikeWorkshop.Application.Functions.SummaryFunctions.Queries.GetSummaryWithDetails;
+using BikeWorkshop.Application.Functions.SummaryFunctions.Queries.GetSummaryWithDetailsByShortId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,12 @@ public class SummaryController : ControllerBase
 		return Ok(await _mediator.Send(query));
 	}
 
+	[HttpGet("get/{shortId}")]
+	public async Task<ActionResult<SummaryWithDetailsDto>> GetByShortId([FromRoute]string shortId)
+	{
+		var query = new GetSummaryWithDetailsByShortIdQuery(shortId);
+		return Ok(await _mediator.Send(query));
+	}
 
 	[HttpPost("create")]
 	public async Task<IActionResult> CreateSummary(CreateSummaryForOrderCommand command)

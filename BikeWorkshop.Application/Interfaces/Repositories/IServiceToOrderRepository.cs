@@ -1,4 +1,5 @@
-﻿using BikeWorkshop.Domain.Entities;
+﻿using BikeWorkshop.Application.Functions.DTO;
+using BikeWorkshop.Domain.Entities;
 
 namespace BikeWorkshop.Application.Interfaces.Repositories;
 
@@ -9,4 +10,5 @@ public interface IServiceToOrderRepository
 	Task<ServiceToOrder?> GetById(Guid serviceToOrderId);
 	Task<List<ServiceToOrder>> GetByOrderId(Guid orderId);
 	Task<List<ServiceToOrder>> GetServiceDetailsByOrderId(Guid orderId);
+	Task<List<ServiceToOrder>> GetServiceDetailsByShortId(string shortId);	
 }

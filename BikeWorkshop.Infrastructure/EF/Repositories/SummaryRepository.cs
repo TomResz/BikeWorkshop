@@ -2,6 +2,7 @@
 using BikeWorkshop.Domain.Entities;
 using BikeWorkshop.Infrastructure.EF.Context;
 using Microsoft.EntityFrameworkCore;
+using shortid;
 
 namespace BikeWorkshop.Infrastructure.EF.Repositories;
 internal class SummaryRepository : ISummaryRepository
@@ -30,6 +31,12 @@ internal class SummaryRepository : ISummaryRepository
 		.Summaries
 		.Include(x=>x.Order)
 		.FirstOrDefaultAsync(x=>x.OrderId == orderId);
+
+	public async Task<Summary?> GetByShortUniquerId(string shortId)
+		=> await _context
+		.Summaries
+		.Include(x => x.Order)
+		.FirstOrDefaultAsync(x => x.Order.ShortUniqueId == shortId);
 
 	public async Task Update(Summary summary)
 	{

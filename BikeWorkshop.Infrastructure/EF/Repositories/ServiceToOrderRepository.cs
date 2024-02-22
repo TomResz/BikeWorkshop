@@ -46,4 +46,13 @@ public class ServiceToOrderRepository
 		.Include(x => x.Service)
 		.Where(x => x.OrderId == orderId)
 		.ToListAsync();
+
+	public async Task<List<ServiceToOrder>> GetServiceDetailsByShortId(string shortId)
+		=> await _dbContext
+		.ServiceToOrders
+		.AsNoTracking()
+		.Include(x => x.Service)
+		.Include(x=>x.Order)
+		.Where(x => x.Order.ShortUniqueId == shortId)
+		.ToListAsync();
 }

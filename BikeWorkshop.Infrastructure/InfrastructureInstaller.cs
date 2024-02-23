@@ -1,6 +1,7 @@
 ﻿using BikeWorkshop.Application.Interfaces.Services;
 using BikeWorkshop.Infrastructure.DI;
 using BikeWorkshop.Infrastructure.EF.Context;
+using BikeWorkshop.Infrastructure.Email.Contents;
 using BikeWorkshop.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,7 @@ public static class InfrastructureInstaller
 		services.AddJwtService(configuration);
 		services.AddRepositories();
 		services.AddSMTPClient(configuration);
+
 		return services;
 	}
 }

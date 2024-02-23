@@ -1,6 +1,4 @@
-﻿using BikeWorkshop.Application.Email.Contents;
-using BikeWorkshop.Application.Interfaces.Services;
-using BikeWorkshop.Application.MediatorPipeline;
+﻿using BikeWorkshop.Application.MediatorPipeline;
 using BikeWorkshop.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -20,8 +18,6 @@ public static class ApplicationInstaller
 		});
 		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-		services.AddSingleton<ICreateOrderEmailContent, CreateOrderEmailContent>();
-		services.AddSingleton<ISummaryEmailContent, SummaryOrderEmailContent>();
 		services.AddValidators();
 		return services;
 	}

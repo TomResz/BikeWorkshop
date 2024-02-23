@@ -1,4 +1,5 @@
-﻿using BikeWorkshop.Application.Interfaces.Repositories;
+﻿using BikeWorkshop.Application.Interfaces.Email;
+using BikeWorkshop.Application.Interfaces.Repositories;
 using BikeWorkshop.Application.Interfaces.Services;
 using BikeWorkshop.Domain.Entities;
 using BikeWorkshop.Domain.Enums;

@@ -1,4 +1,7 @@
-﻿using BikeWorkshop.Application.Interfaces.Services;
+﻿using BikeWorkshop.Application.Interfaces.Email;
+using BikeWorkshop.Application.Interfaces.Services;
+using BikeWorkshop.Infrastructure.Email.Contents;
+using BikeWorkshop.Infrastructure.Email.URLs;
 using BikeWorkshop.Infrastructure.Services;
 using BikeWorkshop.Infrastructure.SMPT;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +26,12 @@ internal static class SMTPExtension
 		services.AddSingleton(smptClient);
 		services.AddSingleton(smptClientSettings);
 		services.AddSingleton<ICustomEmailSender, CustomEmailSender>();
+
+		var trackingUrl = new OrderTrackingURL();
+		configuration.GetSection("TrackingUrl").Bind(trackingUrl);
+		services.AddSingleton(typeof(IOrderTrackingURL),trackingUrl);
+		services.AddSingleton<ICreateOrderEmailContent, CreateOrderEmailContent>();
+		services.AddSingleton<ISummaryEmailContent, SummaryOrderEmailContent>();
 		return services;
 	}
 }

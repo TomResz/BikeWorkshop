@@ -1,11 +1,11 @@
-﻿using BikeWorkshop.Application.Interfaces.Services;
+﻿using BikeWorkshop.Application.Interfaces.Email;
 
-namespace BikeWorkshop.Application.Email.Contents;
+namespace BikeWorkshop.Infrastructure.Email.Contents;
 
 internal sealed class CreateOrderEmailContent : ICreateOrderEmailContent
 {
-	public string Content(string url,string shortId)
-        => $@"
+	public string Content(string url, string shortId)
+		=> $@"
             <!DOCTYPE html>
             <html lang=""pl"">
             <head>

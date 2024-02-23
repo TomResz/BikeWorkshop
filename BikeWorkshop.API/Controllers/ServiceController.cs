@@ -5,11 +5,13 @@ using BikeWorkshop.Application.Functions.ServiceFunctions.Commands.Delete;
 using BikeWorkshop.Application.Functions.ServiceFunctions.Commands.Update;
 using BikeWorkshop.Application.Functions.ServiceFunctions.Queries.GetAll;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeWorkshop.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "Manager,Worker")]
 [ApiController]
 public class ServiceController : ControllerBase
 {

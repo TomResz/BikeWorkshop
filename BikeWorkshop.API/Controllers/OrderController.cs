@@ -12,6 +12,7 @@ using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetPageOfRetriev
 using BikeWorkshop.Application.Functions.OrderFunctions.Queries.GetRetrieved;
 using BikeWorkshop.Application.Pagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeWorkshop.API.Controllers;
@@ -33,6 +34,7 @@ public class OrderController : ControllerBase
 	/// <response code="200">If the order creation is successful.</response>
 	/// <response code="400">If the order data is invalid.</response>
 	[HttpPost("create_order")]
+	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> Create(CreateOrderEvent @event)
@@ -56,6 +58,7 @@ public class OrderController : ControllerBase
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
 	[HttpGet("get_active/{direction}")]
+	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 	public async Task<ActionResult<List<OrderDto>>> GetAllCurrent([FromRoute] string direction)
@@ -80,6 +83,7 @@ public class OrderController : ControllerBase
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
 	[HttpGet("get_completed/{direction}")]
+	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 	public async Task<ActionResult<List<OrderDto>>> GetAllCompleted([FromRoute] string direction)
@@ -103,6 +107,7 @@ public class OrderController : ControllerBase
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
 	[HttpGet("get_retrieved/{direction}")]
+	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	public async Task<ActionResult<List<OrderDto>>> GetAllRetrieved([FromRoute] string direction)
 	{
@@ -115,8 +120,9 @@ public class OrderController : ControllerBase
 	/// <summary>
 	/// Returns page of current orders.
 	/// </summary>
-	[ProducesResponseType(typeof(PagedList<OrderDto>), StatusCodes.Status200OK)]
 	[HttpGet("current")]
+	[Authorize(Roles = "Manager,Worker")]
+	[ProducesResponseType(typeof(PagedList<OrderDto>), StatusCodes.Status200OK)]
 	public async Task<ActionResult<PagedList<OrderDto>>> GetCurrentPage([FromQuery] PageParameters parameters)
 	{
 		var query = new GetPageOfCurrentsOrdersQuery(parameters.Page, parameters.PageSize);
@@ -124,17 +130,28 @@ public class OrderController : ControllerBase
 		return Ok(response);
 	}
 
-
+	/// <summary>
+	/// Used to confirm receipt of an order.
+	/// </summary>
+	/// <param name="command">The command contains the Id (Guid) of the order.</param>
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[HttpPatch("retrieve-order")]
+	[Authorize(Roles = "Manager,Worker")]
 	public async Task<IActionResult> RetrieveOrder(RetrieveOrderCommand command)
 	{
 		await _mediator.Send(command);
 		return Ok();
 	}
 
+	/// <summary>
+	/// Returns history of order to user.
+	/// </summary>
+	/// <param name="shortId">Short unique Id.</param>
+	/// <returns>History of order.</returns>
+	[ProducesResponseType(typeof(OrderHistoryDto), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(string),StatusCodes.Status404NotFound)]
 	[HttpGet("search/{shortId}")]
 	public async Task<ActionResult<OrderHistoryDto>> GetByShortId(string shortId)
 	{
@@ -142,8 +159,16 @@ public class OrderController : ControllerBase
 		return Ok(orderHistory);
 	}
 
-
+	/// <summary>
+	/// Returns page of completed orders.
+	/// </summary>
+	/// <param name="parameters">Includes page number and size.</param>
+	/// <param name="direction">Includes order sorting direction. Optional field.</param>
+	/// <returns>Page of completed orders.</returns>
+	[ProducesResponseType(typeof(PagedList<OrderDto>),StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[HttpGet("completed")]
+	[Authorize(Roles = "Manager,Worker")]
 	public async Task<ActionResult<PagedList<OrderDto>>> GetPageOfCompleted([FromQuery] PageParameters parameters, [FromQuery] string? direction)
 	{
 		SortingDirection? sortingDirection = null;
@@ -154,8 +179,16 @@ public class OrderController : ControllerBase
 		var orders = await _mediator.Send(new GetPageOfCompletedQuery(parameters.Page,parameters.PageSize));
 		return Ok(orders);
 	}
-
+	/// <summary>
+	/// Returns page of retrieved orders.
+	/// </summary>
+	/// <param name="parameters">Includes page number and size.</param>
+	/// <param name="direction">Includes order sorting direction. Optional field.</param>
+	/// <returns>Page of retrieved orders.</returns>
+	[ProducesResponseType(typeof(PagedList<OrderDto>), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[HttpGet("retrieved")]
+	[Authorize(Roles = "Manager,Worker")]
 	public async Task<ActionResult<PagedList<OrderDto>>> GetPageOfRetrieved([FromQuery] PageParameters parameters, [FromQuery] string? direction)
 	{
 		SortingDirection? sortingDirection = null;

@@ -3,11 +3,13 @@ using BikeWorkshop.Application.Functions.ServiceToOrderFunctions.Commands.Add;
 using BikeWorkshop.Application.Functions.ServiceToOrderFunctions.Commands.Delete;
 using BikeWorkshop.Application.Functions.ServiceToOrderFunctions.Queries.GetByOrder;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeWorkshop.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "Manager,Worker")]
 [ApiController]
 public class ServiceToOrderController : ControllerBase
 {

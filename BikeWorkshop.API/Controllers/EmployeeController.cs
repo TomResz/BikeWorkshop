@@ -46,6 +46,7 @@ public class EmployeeController : ControllerBase
 	/// <response code="400">If data is invalid or email already exists.</response>
 	/// <response code="204">If employee is successfully created.</response>
 	[HttpPost("register")]
+	[Authorize(Roles ="Manager")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 	public async Task<ActionResult> Register(RegisterEmployeeCommand command)
@@ -80,6 +81,7 @@ public class EmployeeController : ControllerBase
 	/// <response code="204">If password was changed.</response>
 	/// <response code="400">If password or confirmation password validation failed.</response>
 	[HttpPut("update_password")]
+	[Authorize(Roles ="Manager,Worker")]
 	[ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status204NoContent)]
 	public async Task<IActionResult> UpdatePassword(UpdatePasswordCommand command)

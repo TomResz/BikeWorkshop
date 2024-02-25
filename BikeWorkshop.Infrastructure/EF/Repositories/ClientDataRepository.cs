@@ -22,6 +22,12 @@ public class ClientDataRepository : IClientDataRepository
 		await _context.SaveChangesAsync();
 	}
 
+	public async Task<ClientData?> GeByOrderId(Guid orderId)
+		=> await _context.ClientData
+		.Include(x=>x.Orders)
+		.Where(x=> x.Orders.Any(x=> x.Id == orderId))
+		.FirstOrDefaultAsync();
+
 	public async Task<ClientData?> GetByPhoneNumberOrEmail(string phoneNumber, string? email)
 		=> await _context.ClientData
 		.FirstOrDefaultAsync(x => x.Email == email 

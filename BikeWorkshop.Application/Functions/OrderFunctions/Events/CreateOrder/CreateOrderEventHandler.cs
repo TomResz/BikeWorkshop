@@ -1,4 +1,4 @@
-﻿using BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateClientData;
+﻿using BikeWorkshop.Application.Functions.ClientDataFunctions.Commands.CreateClientData;
 using BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateOrder;
 using BikeWorkshop.Application.Interfaces.Email;
 using BikeWorkshop.Application.Interfaces.Repositories;

@@ -8,4 +8,5 @@ public interface IClientDataRepository
 	Task Add(ClientData data);
 	Task<string?> GetEmailByOrderId(Guid orderId);
 	Task<ClientData?> GeByOrderId(Guid orderId);
+	Task<ClientData?> GetByShortId(string shortId);
 }

@@ -33,6 +33,12 @@ public class ClientDataRepository : IClientDataRepository
 		.FirstOrDefaultAsync(x => x.Email == email 
 							|| x.PhoneNumber == phoneNumber);
 
+	public async Task<ClientData?> GetByShortId(string shortId)
+		=> await _context.ClientData
+		.Include(x => x.Orders)
+		.Where(x => x.Orders.Any(x => x.ShortUniqueId == shortId))
+		.FirstOrDefaultAsync();
+
 	public async Task<string?> GetEmailByOrderId(Guid orderId)
 		=> await _context
 		.Orders

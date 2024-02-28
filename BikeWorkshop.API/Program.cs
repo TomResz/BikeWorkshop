@@ -1,3 +1,4 @@
+using BikeWorkshop.API.Extensions;
 using BikeWorkshop.API.SwaggerDoc;
 using BikeWorkshop.Application;
 using BikeWorkshop.Infrastructure;
@@ -6,13 +7,14 @@ using Serilog;
 using Spectre.Console;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var connectionString = ConnectionStringExtension.GetConnectionString(builder.Configuration);
 builder.Services.AddLogging();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocSettings();
 
-builder.Services.AddInfrastructure(builder.Configuration)
+builder.Services
+	.AddInfrastructure(builder.Configuration,connectionString)
 	.AddApplication()
 	.AddShared();
 
@@ -28,6 +30,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+	app.ApplyMigration();
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }

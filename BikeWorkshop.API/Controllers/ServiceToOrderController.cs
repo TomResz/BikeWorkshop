@@ -5,6 +5,7 @@ using BikeWorkshop.Application.Functions.ServiceToOrderFunctions.Queries.GetByOr
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BikeWorkshop.API.Controllers;
 
@@ -29,13 +30,13 @@ public class ServiceToOrderController : ControllerBase
 	/// <br></br>-Price (<b>decimal</b>).
 	/// </param>
 	[HttpPost("add")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[SwaggerResponse(StatusCodes.Status201Created)]
+	[SwaggerResponse(StatusCodes.Status404NotFound,"Order with given Id not found.")]
+	[SwaggerResponse(StatusCodes.Status400BadRequest, "Order has already been completed.")]
 	public async Task<IActionResult> Add(AddServiceToOrderCommand command)
 	{
 		await _mediator.Send(command);
-		return Ok();
+		return Created();
 	}
 
 	/// <summary>
@@ -44,7 +45,7 @@ public class ServiceToOrderController : ControllerBase
 	/// <param name="command">Include serviceToOrder entity unique ID.</param>
 	[HttpDelete("delete")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[SwaggerResponse(StatusCodes.Status404NotFound,"Unknown service to order Id.")]
 	public async Task<IActionResult> Delete(DeleteServiceToOrderCommand command)
 	{
 		await _mediator.Send(command);
@@ -58,7 +59,7 @@ public class ServiceToOrderController : ControllerBase
 	/// <returns>List of serviceToOrderDto's.</returns>
 	[HttpGet("{orderId:guid}/all")]
 	[ProducesResponseType(typeof(List<ServiceToOrderDto>),StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[SwaggerResponse(StatusCodes.Status404NotFound,"Unknown order Id.")]
 	public async Task<ActionResult<List<ServiceToOrderDto>>> GetByOrderId([FromRoute]Guid orderId)
 	{
 		var query = new GetServiceToOrderByOrderQuery(orderId);

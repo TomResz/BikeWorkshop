@@ -6,11 +6,13 @@ using BikeWorkshop.Application.Functions.SummaryFunctions.Queries.GetSummaryWith
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BikeWorkshop.API.Controllers;
 [Route("api/[controller]")]
 [Authorize(Roles = "Manager,Worker")]
 [ApiController]
+[SwaggerResponse(StatusCodes.Status401Unauthorized)]
 public class SummaryController : ControllerBase
 {
 	private readonly IMediator _mediator;
@@ -22,8 +24,10 @@ public class SummaryController : ControllerBase
 	/// <summary>
 	/// Returns summary with details.
 	/// </summary>
-	/// <param name="orderId">Order Id(<b>Guid</b>).</param>
+	/// <param name="orderId">Order Id (<b>Guid</b>).</param>
 	/// <returns>Summary with details</returns>
+	[SwaggerResponse(StatusCodes.Status200OK)]
+	[SwaggerResponse(StatusCodes.Status404NotFound)]
 	[HttpGet("get={orderId::guid}")]
 	public async Task<ActionResult<SummaryWithDetailsDto>> Get(Guid orderId)
 	{
@@ -35,6 +39,8 @@ public class SummaryController : ControllerBase
 	/// </summary>
 	/// <param name="shortId">Short unique Id.</param>
 	/// <returns>Summary with details.</returns>
+	[SwaggerResponse(StatusCodes.Status200OK)]
+	[SwaggerResponse(StatusCodes.Status404NotFound,"If summary not found.")]
 	[HttpGet("get/{shortId}")]
 	public async Task<ActionResult<SummaryWithDetailsDto>> GetByShortId([FromRoute]string shortId)
 	{
@@ -47,9 +53,9 @@ public class SummaryController : ControllerBase
 	/// </summary>
 	/// <param name="command"> Command includes order Id and conclusions (optional field).</param>
 	/// <returns></returns>
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[SwaggerResponse(StatusCodes.Status204NoContent, "Successfully created summary.")]
+	[SwaggerResponse(StatusCodes.Status404NotFound, "If the order is unknown.")]
+	[SwaggerResponse(StatusCodes.Status400BadRequest, "If data is invalid.")]
 	[HttpPost("create")]
 	public async Task<IActionResult> CreateSummary(CreateSummaryForOrderCommand command)
 	{
@@ -61,9 +67,9 @@ public class SummaryController : ControllerBase
 	/// Delete summary of order with only completed status and changes status to original.
 	/// </summary>
 	/// <param name="command">Includes order Id.</param>
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[SwaggerResponse(StatusCodes.Status204NoContent, "Successfully removed.")]
+	[SwaggerResponse(StatusCodes.Status404NotFound, "If summary with given order id was not found.")]
+	[SwaggerResponse(StatusCodes.Status400BadRequest, "If the order has already been received.")]
 	[HttpDelete("delete")]
 	public async Task<IActionResult> Delete(DeleteSummaryCommand command)
 	{

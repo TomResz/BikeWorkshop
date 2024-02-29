@@ -14,11 +14,13 @@ using BikeWorkshop.Application.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BikeWorkshop.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[SwaggerResponse(StatusCodes.Status401Unauthorized)]
 public class OrderController : ControllerBase
 {
 	private readonly IMediator _mediator;
@@ -35,12 +37,12 @@ public class OrderController : ControllerBase
 	/// <response code="400">If the order data is invalid.</response>
 	[HttpPost("create_order")]
 	[Authorize(Roles = "Manager,Worker")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> Create(CreateOrderEvent @event)
 	{
 		await _mediator.Send(@event);
-		return Ok();
+		return Created();
 	}
 
 
@@ -101,14 +103,10 @@ public class OrderController : ControllerBase
 	/// <b>asc</b>-Ascending
 	/// <br><b>desc</b>-Descending</br>
 	/// </param>
-	/// <returns>List of completed orders.</returns>
-	/// <response code="200"> If sorting direction is correct.
-	/// </response>
-	/// <response code="400"> If sorting direction is invalid.
-	/// </response>
 	[HttpGet("get_retrieved/{direction}")]
 	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
+	[SwaggerResponse(StatusCodes.Status400BadRequest,"Invalid sorting parameters.")]
 	public async Task<ActionResult<List<OrderDto>>> GetAllRetrieved([FromRoute] string direction)
 	{
 		var query = new GetRetrievedOrdersQuery(SortingParameters.FromString(direction));
@@ -134,15 +132,15 @@ public class OrderController : ControllerBase
 	/// Used to confirm receipt of an order.
 	/// </summary>
 	/// <param name="command">The command contains the Id (Guid) of the order.</param>
-	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[SwaggerResponse(StatusCodes.Status204NoContent)]
+	[SwaggerResponse(StatusCodes.Status400BadRequest, "If trying to delete summary of a received order.")]
+	[SwaggerResponse(StatusCodes.Status404NotFound, "If there is no given order with a given Id.")]
 	[HttpPatch("retrieve-order")]
 	[Authorize(Roles = "Manager,Worker")]
 	public async Task<IActionResult> RetrieveOrder(RetrieveOrderCommand command)
 	{
 		await _mediator.Send(command);
-		return Ok();
+		return NoContent();
 	}
 
 	/// <summary>
@@ -150,8 +148,8 @@ public class OrderController : ControllerBase
 	/// </summary>
 	/// <param name="shortId">Short unique Id.</param>
 	/// <returns>History of order.</returns>
-	[ProducesResponseType(typeof(OrderHistoryDto), StatusCodes.Status200OK)]
-	[ProducesResponseType(typeof(string),StatusCodes.Status404NotFound)]
+	[SwaggerResponse( StatusCodes.Status200OK, "Retrieves a history of data.",typeof(OrderHistoryDto))]
+	[SwaggerResponse(StatusCodes.Status404NotFound, "If there is no given order with a given short Id.")]
 	[HttpGet("search/{shortId}")]
 	public async Task<ActionResult<OrderHistoryDto>> GetByShortId(string shortId)
 	{
@@ -166,7 +164,7 @@ public class OrderController : ControllerBase
 	/// <param name="direction">Includes order sorting direction. Optional field.</param>
 	/// <returns>Page of completed orders.</returns>
 	[ProducesResponseType(typeof(PagedList<OrderDto>),StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[SwaggerResponse(StatusCodes.Status400BadRequest,"Invalid page parameters or direction.")]
 	[HttpGet("completed")]
 	[Authorize(Roles = "Manager,Worker")]
 	public async Task<ActionResult<PagedList<OrderDto>>> GetPageOfCompleted([FromQuery] PageParameters parameters, [FromQuery] string? direction)
@@ -186,7 +184,7 @@ public class OrderController : ControllerBase
 	/// <param name="direction">Includes order sorting direction. Optional field.</param>
 	/// <returns>Page of retrieved orders.</returns>
 	[ProducesResponseType(typeof(PagedList<OrderDto>), StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[SwaggerResponse(StatusCodes.Status400BadRequest,"Invalid page parameters or sorting direction.")]
 	[HttpGet("retrieved")]
 	[Authorize(Roles = "Manager,Worker")]
 	public async Task<ActionResult<PagedList<OrderDto>>> GetPageOfRetrieved([FromQuery] PageParameters parameters, [FromQuery] string? direction)

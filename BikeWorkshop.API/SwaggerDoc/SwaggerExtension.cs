@@ -33,6 +33,7 @@ public static class SwaggerExtension
 			var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 			var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 			c.IncludeXmlComments(xmlPath);
+			c.EnableAnnotations();
 		});
 		return services;
 	}

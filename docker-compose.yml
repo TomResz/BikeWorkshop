@@ -14,7 +14,8 @@ services:
     container_name: BikeWorkshopAPI
     image: ${DOCKER_REGISTRY-}bikeworkshopapi
     ports:
-        - 8001:80
+        - "5000:5000"
+        - "5001:5001" 
     build:
       context: .
       dockerfile: BikeWorkshop.API/Dockerfile

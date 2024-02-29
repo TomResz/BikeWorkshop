@@ -1,4 +1,4 @@
-﻿using BikeWorkshop.Application.Functions.OrderFunctions.Command.CreateClientData;
+﻿using BikeWorkshop.Application.Functions.ClientDataFunctions.Commands.CreateClientData;
 using BikeWorkshop.Application.Interfaces.Repositories;
 using BikeWorkshop.Domain.Entities;
 using Moq;

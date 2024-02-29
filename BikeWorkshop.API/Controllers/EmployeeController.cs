@@ -6,11 +6,13 @@ using BikeWorkshop.Application.Functions.EmployeeFunctions.Queries.GetEmployees;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BikeWorkshop.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[SwaggerResponse(StatusCodes.Status401Unauthorized)]
 public class EmployeeController : ControllerBase
 {
 	private readonly IMediator _mediator;
@@ -23,12 +25,13 @@ public class EmployeeController : ControllerBase
 	/// <summary>
 	/// Retrieves a list of all employees.
 	/// </summary>
-	/// <returns> List of employees.
-	/// </returns>
-	/// <response code="200"></response>
 	[HttpGet("get_all")]
 	[Authorize(Roles = "Manager")]
 	[ProducesResponseType(typeof(List<EmployeeDto>), StatusCodes.Status200OK)]
+	[SwaggerResponse(StatusCodes.Status200OK,"Fetch a list of employees.",typeof(List<EmployeeDto>))]
+	[SwaggerResponse(StatusCodes.Status401Unauthorized)]
+	[SwaggerResponse(StatusCodes.Status403Forbidden,"Only manager can fetch data from this endpoint.")]
+
 	public async Task<ActionResult<List<EmployeeDto>>> GetAll()
 	{
 		var response = await _mediator.Send(new GetEmployeesQuery());
@@ -47,6 +50,7 @@ public class EmployeeController : ControllerBase
 	/// <response code="204">If employee is successfully created.</response>
 	[HttpPost("register")]
 	[Authorize(Roles ="Manager")]
+	[SwaggerResponse(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 	public async Task<ActionResult> Register(RegisterEmployeeCommand command)
@@ -82,6 +86,7 @@ public class EmployeeController : ControllerBase
 	/// <response code="400">If password or confirmation password validation failed.</response>
 	[HttpPut("update_password")]
 	[Authorize(Roles ="Manager,Worker")]
+	[SwaggerResponse(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status204NoContent)]
 	public async Task<IActionResult> UpdatePassword(UpdatePasswordCommand command)

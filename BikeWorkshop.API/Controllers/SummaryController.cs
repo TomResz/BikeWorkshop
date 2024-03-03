@@ -28,7 +28,7 @@ public class SummaryController : ControllerBase
 	/// <returns>Summary with details</returns>
 	[SwaggerResponse(StatusCodes.Status200OK)]
 	[SwaggerResponse(StatusCodes.Status404NotFound)]
-	[HttpGet("get={orderId::guid}")]
+	[HttpGet("{orderId::guid}")]
 	public async Task<ActionResult<SummaryWithDetailsDto>> Get(Guid orderId)
 	{
 		var query = new GetSummaryWithDetailsQuery(orderId);
@@ -41,7 +41,7 @@ public class SummaryController : ControllerBase
 	/// <returns>Summary with details.</returns>
 	[SwaggerResponse(StatusCodes.Status200OK)]
 	[SwaggerResponse(StatusCodes.Status404NotFound,"If summary not found.")]
-	[HttpGet("get/{shortId}")]
+	[HttpGet("short/{shortId}")]
 	public async Task<ActionResult<SummaryWithDetailsDto>> GetByShortId([FromRoute]string shortId)
 	{
 		var query = new GetSummaryWithDetailsByShortIdQuery(shortId);

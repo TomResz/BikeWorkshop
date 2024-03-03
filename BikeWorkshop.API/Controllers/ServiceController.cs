@@ -54,26 +54,15 @@ public class ServiceController : ControllerBase
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
 	/// <returns>Sorted list of services.</returns>
-	[HttpGet("get_all/{direction}")]
+	[HttpGet("all/")]
 	[ProducesResponseType(typeof(List<ServiceDto>),StatusCodes.Status200OK)]
-	public async Task<ActionResult<List<ServiceDto>>> GetAllSortedAscending([FromRoute]string direction)
+	public async Task<ActionResult<List<ServiceDto>>> GetAllSortedAscending([FromQuery]string? direction)
 	{
-		var response = await _mediator.Send(new GetAllServicesQuery(SortingParameters.FromString(direction)));
+		var response = await _mediator.Send(new GetAllServicesQuery(direction is not null 
+			? SortingParameters.FromString(direction) 
+			: null));
 		return Ok(response);
 	}
-
-
-	/// <summary>
-	/// Retrieves a list of all services.
-	/// </summary>
-	/// <returns>List of orders.</returns>
-	[HttpGet("get_all")]
-	public async Task<ActionResult<List<ServiceDto>>> GetAll()
-	{
-		var response = await _mediator.Send(new GetAllServicesQuery());
-		return Ok(response);
-	}
-
 
 	/// <summary>
 	/// Deletes a service based on the provided command.

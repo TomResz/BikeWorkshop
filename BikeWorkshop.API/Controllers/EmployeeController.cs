@@ -25,7 +25,7 @@ public class EmployeeController : ControllerBase
 	/// <summary>
 	/// Retrieves a list of all employees.
 	/// </summary>
-	[HttpGet("get_all")]
+	[HttpGet("all")]
 	[Authorize(Roles = "Manager")]
 	[ProducesResponseType(typeof(List<EmployeeDto>), StatusCodes.Status200OK)]
 	[SwaggerResponse(StatusCodes.Status200OK,"Fetch a list of employees.",typeof(List<EmployeeDto>))]

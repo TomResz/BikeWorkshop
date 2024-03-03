@@ -35,7 +35,7 @@ public class OrderController : ControllerBase
 	/// <returns>An ActionResult representing the result of the order creation operation.</returns>
 	/// <response code="200">If the order creation is successful.</response>
 	/// <response code="400">If the order data is invalid.</response>
-	[HttpPost("create_order")]
+	[HttpPost("create")]
 	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,7 +59,7 @@ public class OrderController : ControllerBase
 	/// </response>
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
-	[HttpGet("get_active/{direction}")]
+	[HttpGet("current/{direction}")]
 	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -84,7 +84,7 @@ public class OrderController : ControllerBase
 	/// </response>
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
-	[HttpGet("get_completed/{direction}")]
+	[HttpGet("completed/{direction}")]
 	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -103,7 +103,7 @@ public class OrderController : ControllerBase
 	/// <b>asc</b>-Ascending
 	/// <br><b>desc</b>-Descending</br>
 	/// </param>
-	[HttpGet("get_retrieved/{direction}")]
+	[HttpGet("retrieved/{direction}")]
 	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
 	[SwaggerResponse(StatusCodes.Status400BadRequest,"Invalid sorting parameters.")]

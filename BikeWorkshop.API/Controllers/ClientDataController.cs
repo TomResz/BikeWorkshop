@@ -1,6 +1,5 @@
 ﻿using BikeWorkshop.Application.Functions.ClientDataFunctions.Queries.Get;
 using BikeWorkshop.Application.Functions.DTO;
-using BikeWorkshop.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +25,7 @@ public class ClientDataController : ControllerBase
 	/// <returns>Client's phone number and email.</returns>
 	[SwaggerResponse(StatusCodes.Status200OK, "Client data successfully retrieved.", typeof(ClientDataDto))]
 	[SwaggerResponse(StatusCodes.Status404NotFound, "Order not found.")]
-	[HttpGet("get/{orderId::guid}")]
+	[HttpGet("/{orderId::guid}")]
 	public async Task<ActionResult<ClientDataDto>> GetByOrderId(Guid orderId)
 	{
 		var query = new GetClientDataByOrderIdQuery(orderId);

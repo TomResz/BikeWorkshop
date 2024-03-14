@@ -25,7 +25,7 @@ public class ClientDataController : ControllerBase
 	/// <returns>Client's phone number and email.</returns>
 	[SwaggerResponse(StatusCodes.Status200OK, "Client data successfully retrieved.", typeof(ClientDataDto))]
 	[SwaggerResponse(StatusCodes.Status404NotFound, "Order not found.")]
-	[HttpGet("/{orderId::guid}")]
+	[HttpGet("{orderId::guid}")]
 	public async Task<ActionResult<ClientDataDto>> GetByOrderId(Guid orderId)
 	{
 		var query = new GetClientDataByOrderIdQuery(orderId);

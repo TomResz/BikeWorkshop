@@ -3,11 +3,11 @@ using BikeWorkshop.Application.Interfaces.Repositories;
 using BikeWorkshop.Domain.Entities;
 using Moq;
 
-namespace BikeWorkshop.Application.Tests.Functions.OrderFunctions.Commands;
+namespace BikeWorkshop.Application.Tests.Functions.ClientDataFunctions.Commands;
 
 public class CreateClientDataCommandHandlerTests
 {
-	private readonly Mock<IClientDataRepository> _clientDataRepositoryMock;
+    private readonly Mock<IClientDataRepository> _clientDataRepositoryMock;
 
     public CreateClientDataCommandHandlerTests()
     {
@@ -20,7 +20,7 @@ public class CreateClientDataCommandHandlerTests
         var command = new CreateClientDataCommand("tom@gmail.com", "+48777666555");
         var handler = new CreateClientDataCommandHandler(_clientDataRepositoryMock.Object);
 
-        await handler.Handle(command,CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
 
         _clientDataRepositoryMock.Verify(x => x.Add(It.IsAny<ClientData>()), Times.Once);
     }

@@ -9,7 +9,7 @@ internal sealed class AddServiceCommandHandler
 	: IRequestHandler<AddServiceCommand, AddServiceResponse>
 {
 	private readonly IServiceRepository _serviceRepository;
-	public AddServiceCommandHandler(IServiceRepository serviceRepository, IValidator<AddServiceCommand> validator)
+	public AddServiceCommandHandler(IServiceRepository serviceRepository)
 	{
 		_serviceRepository = serviceRepository;
 	}

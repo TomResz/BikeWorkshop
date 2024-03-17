@@ -1,5 +1,5 @@
-﻿using BikeWorkshop.API.Tests.Settings;
-using BikeWorkshop.API.Tests.Settings.BaseClasses;
+﻿using BikeWorkshop.API.Tests.Settings.BaseClasses;
+using BikeWorkshop.API.Tests.Settings.DatabaseFilters;
 using BikeWorkshop.API.Tests.Settings.WebAppFactories;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.UpdatePassword;
 using FluentAssertions;
@@ -61,20 +61,4 @@ public class UpdatePasswordTests
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 		responseContent.Should().NotBeNullOrEmpty();
 	}
-
-	//[Fact]
-	//public async Task UpdatePassword_UnauthorizedAccess_ReturnsUnauthorizedStatus()
-	//{
-	//	await _unathorizedDbContext.Initialize();
-
-	//	var command = new UpdatePasswordCommand("12345678", "12345678");
-	//	var json = JsonConvert.SerializeObject(command);
-	//	var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-
-	//	var response = await _unauthorizedHttpClient.PutAsync(_path, httpContent);
-	//	var responseContent = await response.Content.ReadAsStringAsync();
-
-	//	response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
-	//	responseContent.Should().BeNullOrEmpty();
-	//}
 }

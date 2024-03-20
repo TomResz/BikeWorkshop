@@ -19,11 +19,12 @@ internal static class EmailValidationExtension
 		return ruleBuilder
 			.Must((email) =>
 			{
+				var result = true;
 				if (email is not null)
 				{
-					return Regex.IsMatch(email, pattern);
+					result = Regex.IsMatch(email, pattern);
 				}
-				return true;
+				return result;
 			}).WithMessage("Invalid email pattern!");
 	}
 

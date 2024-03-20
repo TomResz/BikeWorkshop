@@ -6,4 +6,6 @@ public static class Constants
     public const string Password = "12345678";
     public const string ManagerEmail = "manager@manager.com";
     public const string WorkerEmail = "worker@worker.com";
+
+    public const string ShortId = "12345";
 }

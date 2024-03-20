@@ -33,16 +33,16 @@ public class OrderController : ControllerBase
 	/// </summary>
 	/// <param name="event">The order creation event containing necessary information.</param>
 	/// <returns>An ActionResult representing the result of the order creation operation.</returns>
-	/// <response code="200">If the order creation is successful.</response>
+	/// <response code="201">If the order creation is successful.</response>
 	/// <response code="400">If the order data is invalid.</response>
 	[HttpPost("create")]
 	[Authorize(Roles = "Manager,Worker")]
 	[ProducesResponseType(StatusCodes.Status201Created)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	public async Task<IActionResult> Create(CreateOrderEvent @event)
+	[SwaggerResponse(StatusCodes.Status400BadRequest)]
+	public async Task<ActionResult> Create(CreateOrderEvent @event)
 	{
 		await _mediator.Send(@event);
-		return Created();
+		return Created("api/order/create",null);
 	}
 
 
@@ -174,7 +174,7 @@ public class OrderController : ControllerBase
 		{
 			sortingDirection = SortingParameters.FromString(direction);
 		}
-		var orders = await _mediator.Send(new GetPageOfCompletedQuery(parameters.Page,parameters.PageSize));
+		var orders = await _mediator.Send(new GetPageOfCompletedQuery(parameters.Page,parameters.PageSize,sortingDirection));
 		return Ok(orders);
 	}
 	/// <summary>
@@ -194,7 +194,7 @@ public class OrderController : ControllerBase
 		{
 			sortingDirection = SortingParameters.FromString(direction);
 		}
-		var orders = await _mediator.Send(new GetPageOfRetrievedOrdersQuery(parameters.Page, parameters.PageSize));
+		var orders = await _mediator.Send(new GetPageOfRetrievedOrdersQuery(parameters.Page, parameters.PageSize, sortingDirection));
 		return Ok(orders);
 	}
 }

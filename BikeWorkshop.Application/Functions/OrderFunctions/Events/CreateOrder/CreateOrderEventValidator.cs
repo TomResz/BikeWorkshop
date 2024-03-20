@@ -1,12 +1,11 @@
 ﻿using BikeWorkshop.Application.Fluent_Validation_Extensions;
 using FluentValidation;
 
-namespace BikeWorkshop.Application.Functions.ClientDataFunctions.Commands.CreateClientData;
-
-internal class CreateClientDataCommandValidator
-    : AbstractValidator<CreateClientDataCommand>
+namespace BikeWorkshop.Application.Functions.OrderFunctions.Events.CreateOrder;
+internal sealed class CreateOrderEventValidator 
+	: AbstractValidator<CreateOrderEvent>
 {
-    public CreateClientDataCommandValidator()
+    public CreateOrderEventValidator()
     {
         RuleFor(x => x.Email)
             .NullableEmailMustBeValid();

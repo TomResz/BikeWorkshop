@@ -31,24 +31,24 @@ public class ServiceToOrderController : ControllerBase
 	/// </param>
 	[HttpPost("add")]
 	[SwaggerResponse(StatusCodes.Status201Created)]
-	[SwaggerResponse(StatusCodes.Status404NotFound,"Order with given Id not found.")]
+	[SwaggerResponse(StatusCodes.Status404NotFound,"Order or service with given Id not found.")]
 	[SwaggerResponse(StatusCodes.Status400BadRequest, "Order has already been completed.")]
 	public async Task<IActionResult> Add(AddServiceToOrderCommand command)
 	{
 		await _mediator.Send(command);
-		return Created();
+		return Created("api/servicetoorder/add",null);
 	}
 
-	/// <summary>
-	/// Delete entity.
-	/// </summary>
-	/// <param name="command">Include serviceToOrder entity unique ID.</param>
-	[HttpDelete("delete")]
+    /// <summary>
+    /// Delete entity.
+    /// </summary>
+    /// <param name="serviceToOrderId">Include serviceToOrder entity unique ID.</param>
+    [HttpDelete("delete/{serviceToOrderId:guid}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[SwaggerResponse(StatusCodes.Status404NotFound,"Unknown service to order Id.")]
-	public async Task<IActionResult> Delete(DeleteServiceToOrderCommand command)
+	public async Task<IActionResult> Delete(Guid serviceToOrderId)
 	{
-		await _mediator.Send(command);
+		await _mediator.Send(new DeleteServiceToOrderCommand(serviceToOrderId));
 		return NoContent();
 	}
 

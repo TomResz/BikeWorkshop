@@ -1,6 +1,8 @@
 ﻿using BikeWorkshop.API.Tests.Orders;
 using BikeWorkshop.API.Tests.Service;
 using BikeWorkshop.API.Tests.Settings.DatabaseFilters;
+using BikeWorkshop.Domain.Entities;
+using BikeWorkshop.Domain.Enums;
 using BikeWorkshop.Infrastructure.EF.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,5 +36,26 @@ public static partial class DatabaseFilters
             .ServiceToOrders
             .AsNoTracking()
             .ToListAsync();
+    }
+
+    public  static async Task<Order> AddRetrievedOrderWithLinkedServices(this BikeWorkshopDbContext context)
+    {
+        var orderId = (await context.AddServicesToOrders())
+            .Select(x => x.OrderId)
+            .First();
+        var order = await context.Orders.FirstAsync(x=> x.Id == orderId);
+        order.OrderStatusId = (int)Status.Retrieved;
+        await context.SaveChangesAsync();
+        return order;
+    }
+    public static async Task<Order> AddCompletedOrderWithLinkedServices(this BikeWorkshopDbContext context)
+    {
+        var orderId = (await context.AddServicesToOrders())
+            .Select(x => x.OrderId)
+            .First();
+        var order = await context.Orders.FirstAsync(x => x.Id == orderId);
+        order.OrderStatusId = (int)Status.Completed;
+        await context.SaveChangesAsync();
+        return order;
     }
 }

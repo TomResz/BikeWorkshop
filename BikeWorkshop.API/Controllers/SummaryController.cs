@@ -53,27 +53,27 @@ public class SummaryController : ControllerBase
 	/// </summary>
 	/// <param name="command"> Command includes order Id and conclusions (optional field).</param>
 	/// <returns></returns>
-	[SwaggerResponse(StatusCodes.Status204NoContent, "Successfully created summary.")]
+	[SwaggerResponse(StatusCodes.Status201Created, "Successfully created summary.")]
 	[SwaggerResponse(StatusCodes.Status404NotFound, "If the order is unknown.")]
 	[SwaggerResponse(StatusCodes.Status400BadRequest, "If data is invalid.")]
 	[HttpPost("create")]
 	public async Task<IActionResult> CreateSummary(CreateSummaryForOrderCommand command)
 	{
 		await _mediator.Send(command);
-		return NoContent();
+		return Created("api/Summary/create",null);
 	}
 
-	/// <summary>
-	/// Delete summary of order with only completed status and changes status to original.
-	/// </summary>
-	/// <param name="command">Includes order Id.</param>
-	[SwaggerResponse(StatusCodes.Status204NoContent, "Successfully removed.")]
+    /// <summary>
+    /// Delete summary of order with only completed status and changes status to original.
+    /// </summary>
+    /// <param name="orderId">Order Id.</param>
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Successfully removed.")]
 	[SwaggerResponse(StatusCodes.Status404NotFound, "If summary with given order id was not found.")]
 	[SwaggerResponse(StatusCodes.Status400BadRequest, "If the order has already been received.")]
-	[HttpDelete("delete")]
-	public async Task<IActionResult> Delete(DeleteSummaryCommand command)
+	[HttpDelete("delete/{orderId:guid}")]
+	public async Task<IActionResult> Delete(Guid orderId)
 	{
-		await _mediator.Send(command);
+		await _mediator.Send(new DeleteSummaryCommand(orderId));
 		return NoContent();
 	}
 }

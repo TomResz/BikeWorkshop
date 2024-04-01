@@ -8,6 +8,9 @@ public static class MigrationExtensions
 	{
 		using var scope = app.ApplicationServices.CreateScope();
 		using var dbContext = scope.ServiceProvider.GetRequiredService<BikeWorkshopDbContext>();
-		dbContext.Database.Migrate();
+		if (dbContext.Database.IsRelational())
+		{
+			dbContext.Database.Migrate();
+		}
 	}
 }

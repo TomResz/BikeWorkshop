@@ -8,6 +8,14 @@ internal class RegisterEmployeeValidator
 {
     public RegisterEmployeeValidator()
     {
+
+		RuleFor(x => x.Password)
+			.PasswordMustBeValid();
+
+		RuleFor(x => x.ConfirmedPassword)
+            .Matches(x => x.Password)
+            .WithMessage("passwords must be the same!");
+        
         RuleFor(x => x.Email)
             .Cascade(CascadeMode.Stop)
             .EmailMustBeValid();

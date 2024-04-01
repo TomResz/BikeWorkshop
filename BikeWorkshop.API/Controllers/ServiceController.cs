@@ -7,6 +7,7 @@ using BikeWorkshop.Application.Functions.ServiceFunctions.Queries.GetAll;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BikeWorkshop.API.Controllers;
 
@@ -26,17 +27,16 @@ public class ServiceController : ControllerBase
 	/// </summary>
 	/// <param name="command">The command containing information to add the service.</param>
 	/// <returns>Response with boolean value and feedback message.</returns>
-	/// <response code="200"> If service creation is successful.
-	/// </response>
 	/// <response code="409"> If service currently exists.
 	/// </response>
 	[HttpPost("add")]
-	[ProducesResponseType(typeof(AddServiceResponse),StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(AddServiceResponse),StatusCodes.Status201Created)]
+	[SwaggerResponse(StatusCodes.Status400BadRequest,"Invalid service name.")]
 	[ProducesResponseType(typeof(AddServiceResponse),StatusCodes.Status409Conflict)]
 	public async Task<ActionResult<AddServiceResponse>> Add(AddServiceCommand command)
 	{
 		var response = await _mediator.Send(command);
-		return response.IsAdded ? Ok(response) : Conflict(response);
+		return response.IsAdded ? Created("api/order/add",null) : Conflict(response);
 	}
 
 
@@ -46,7 +46,7 @@ public class ServiceController : ControllerBase
 	/// <param name="direction">
 	/// Sorting direction:<br></br>
 	/// <b>asc</b>-Ascending
-	/// <br><b>dsc</b>-Descending</br>
+	/// <br><b>desc</b>-Descending</br>
 	/// </param>
 	/// <returns>List of current orders.</returns>
 	/// <response code="200"> If sorting direction is correct.
@@ -54,9 +54,9 @@ public class ServiceController : ControllerBase
 	/// <response code="400"> If sorting direction is invalid.
 	/// </response>
 	/// <returns>Sorted list of services.</returns>
-	[HttpGet("all/")]
+	[HttpGet("all")]
 	[ProducesResponseType(typeof(List<ServiceDto>),StatusCodes.Status200OK)]
-	public async Task<ActionResult<List<ServiceDto>>> GetAllSortedAscending([FromQuery]string? direction)
+	public async Task<ActionResult<List<ServiceDto>>> GetAll([FromQuery]string? direction)
 	{
 		var response = await _mediator.Send(new GetAllServicesQuery(direction is not null 
 			? SortingParameters.FromString(direction) 
@@ -64,21 +64,22 @@ public class ServiceController : ControllerBase
 		return Ok(response);
 	}
 
-	/// <summary>
-	/// Deletes a service based on the provided command.
-	/// </summary>
-	/// <param name="command">The command specifying service UID.</param>
-	/// <returns>
-	/// </returns>
-	/// <response code="204">If service is successfully deleted.</response>
-	/// <response code="400">If service is linked with other orders.</response>
-	/// <response code="404">If service with provided ID doesn't exists.</response>
-	[HttpDelete("delete")]
+    /// <summary>
+    /// Deletes a service based on the provided command.
+    /// </summary>
+    /// <param name="serviceId">Service Id</param>
+    /// <returns>
+    /// </returns>
+    /// <response code="204">If service is successfully deleted.</response>
+    /// <response code="400">If service is linked with other orders.</response>
+    /// <response code="404">If service with provided ID doesn't exists.</response>
+    [HttpDelete("delete/{serviceId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(typeof(string),StatusCodes.Status404NotFound)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-	public async Task<IActionResult> Delete(DeleteServiceCommand command)
+	public async Task<IActionResult> Delete([FromRoute]Guid serviceId)
 	{
+		var command = new DeleteServiceCommand(serviceId);
 		await _mediator.Send(command);
 		return NoContent();
 	}

@@ -10,7 +10,7 @@ namespace BikeWorkshop.API.Tests.Employee;
 public class UpdatePasswordTests 
 	: ManagerBaseClass
 {
-	private const string _path = "api/Employee/update_password";
+	private const string _path = "api/Employee/update-password";
 	public UpdatePasswordTests(ManagerTestWebApplicationFactory<Program> manager) : base(manager)
     {
 		Init();
@@ -24,7 +24,7 @@ public class UpdatePasswordTests
 		var json = JsonConvert.SerializeObject(command);
 		var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
 		
-		var response = await httpClient.PutAsync(_path, httpContent);
+		var response = await httpClient.PostAsync(_path, httpContent);
 		var responseContent = await response.Content.ReadAsStringAsync();
 
 
@@ -40,7 +40,7 @@ public class UpdatePasswordTests
 		var json = JsonConvert.SerializeObject(command);
 		var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
 
-		var response = await httpClient.PutAsync(_path, httpContent);
+		var response = await httpClient.PostAsync(_path, httpContent);
 		var responseContent = await response.Content.ReadAsStringAsync();	
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
@@ -55,7 +55,7 @@ public class UpdatePasswordTests
 		var json = JsonConvert.SerializeObject(command);
 		var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
 
-		var response = await httpClient.PutAsync(_path, httpContent);
+		var response = await httpClient.PostAsync(_path, httpContent);
 		var responseContent = await response.Content.ReadAsStringAsync();
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);

@@ -19,7 +19,7 @@ public class UpdatePasswordByUnauthorizedUserTests
 		var json = JsonConvert.SerializeObject(command);
 		var httpContent = new StringContent(json,System.Text.Encoding.UTF8,"application/json");
 
-		var response = await httpClient.PutAsync("api/employee/update_password", httpContent);
+		var response = await httpClient.PostAsync("api/employee/update-password", httpContent);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
 	}

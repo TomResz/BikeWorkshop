@@ -15,11 +15,15 @@ public class SignInCommandHandlerTests
 	private readonly Mock<IEmployeeRepository> _repositoryMock;
 	private readonly Mock<IJwtService> _jwtServiceMock;
 	private readonly Mock<IPasswordHasher<Employee>> _passwordHasherMock;
+	private readonly Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
+	private readonly Mock<IRefreshTokenService> _refreshTokenServiceMock;
     public SignInCommandHandlerTests()
     {
         _repositoryMock = new Mock<IEmployeeRepository>();
 		_jwtServiceMock = new Mock<IJwtService>();
 		_passwordHasherMock = new Mock<IPasswordHasher<Employee>>();
+		_refreshTokenServiceMock = new Mock<IRefreshTokenService>();
+		_refreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
     }
 
 	[Fact]
@@ -47,13 +51,23 @@ public class SignInCommandHandlerTests
 		_passwordHasherMock.Setup(hasher =>
 				hasher.VerifyHashedPassword(It.IsAny<Employee>(), It.IsAny<string>(), It.IsAny<string>()))
 			.Returns(PasswordVerificationResult.Success);
-
-		var signInCommand = new SignInCommand("test@example.com", "password");
+		_refreshTokenServiceMock.Setup(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<DateTime>()))
+			.Returns(new RefreshToken()
+			{
+				Id = Guid.NewGuid(),
+				Employee = employee,
+				EmployeeId = employee.Id,
+				ExpirationTimeUtc = DateTime.UtcNow,
+				Token = "Tokenasba"
+			});
+        var signInCommand = new SignInCommand("test@example.com", "password");
 
 		var signInCommandHandler = new SignInCommandHandler(
 			_repositoryMock.Object,
 			_jwtServiceMock.Object,
-			_passwordHasherMock.Object
+			_passwordHasherMock.Object,
+			_refreshTokenRepositoryMock.Object,
+			_refreshTokenServiceMock.Object
 		);
 
 		// Act
@@ -84,10 +98,12 @@ public class SignInCommandHandlerTests
 
 		var signInCommand = new SignInCommand("test@example.com", "invalidpassword");
 		var signInCommandHandler = new SignInCommandHandler(
-				_repositoryMock.Object,
-				_jwtServiceMock.Object,
-				_passwordHasherMock.Object
-				);
+            _repositoryMock.Object,
+            _jwtServiceMock.Object,
+            _passwordHasherMock.Object,
+            _refreshTokenRepositoryMock.Object,
+            _refreshTokenServiceMock.Object
+                );
 		// Act
 		var resultTask =  signInCommandHandler.Handle(signInCommand, CancellationToken.None);
 
@@ -105,9 +121,12 @@ public class SignInCommandHandlerTests
 		_repositoryMock.Setup(repo => repo.GetByEmail(It.IsAny<string>()))
 			.ReturnsAsync((string email) => null);
 		var handler = new SignInCommandHandler(
-				_repositoryMock.Object,
-				_jwtServiceMock.Object,
-				_passwordHasherMock.Object);
+            _repositoryMock.Object,
+            _jwtServiceMock.Object,
+            _passwordHasherMock.Object,
+            _refreshTokenRepositoryMock.Object,
+            _refreshTokenServiceMock.Object
+			);
 		// Act
 		var resultTask = handler.Handle(signInCommand, default);
 

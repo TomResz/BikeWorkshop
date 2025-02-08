@@ -12,11 +12,14 @@ public class WorkerTestWebApplicationFactory<TStartup>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        Environment.SetEnvironmentVariable(variable: "APITest", "true");
+        builder.UseEnvironment("APITest");
+
         builder.ConfigureServices(services =>
         {
             services.AddCommonsServices();
 			services.AddSingleton<IPolicyEvaluator, FakeWorkerPolicyEvaluator>();
-
+            builder.UseEnvironment("APITest");
         });
     }
 }

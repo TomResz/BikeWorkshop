@@ -11,7 +11,9 @@ public class ManagerTestWebApplicationFactory<TStartup>
 {
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
-		builder.ConfigureServices(services =>
+        Environment.SetEnvironmentVariable(variable: "APITest", "true");
+        builder.UseEnvironment("APITest");
+        builder.ConfigureServices(services =>
 		{
             services.AddCommonsServices();
 			services.AddSingleton<IPolicyEvaluator, FakeManagerPolicyEvaluator>();

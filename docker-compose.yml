@@ -1,14 +1,16 @@
 version: '3.4'
 
 services:
-  SqlServerDb:
+  bikeworkshop.database:
     container_name: SqlServerContainer
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
         - 8002:1433
     environment:
         - ACCEPT_EULA=Y
-        - MSSQL_SA_PASSWORD=myStong_Password123#    
+        - MSSQL_SA_PASSWORD=myStong_Password123#
+    volumes:
+        - ./.containers/mssql:/var/opt/mssql    
 
   bikeworkshop.api:
     container_name: BikeWorkshopAPI
@@ -20,4 +22,4 @@ services:
       context: .
       dockerfile: BikeWorkshop.API/Dockerfile
     depends_on: 
-    - SqlServerDb
+    - bikeworkshop.database

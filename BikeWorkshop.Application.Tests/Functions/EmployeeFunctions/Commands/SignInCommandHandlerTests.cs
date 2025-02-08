@@ -61,7 +61,7 @@ public class SignInCommandHandlerTests
 
 		// Assert
 		Assert.NotNull(result);
-		Assert.Equal("mocked-token", result.Token);
+		Assert.Equal("mocked-token", result.AccessToken);
 	}
 
 	[Fact]

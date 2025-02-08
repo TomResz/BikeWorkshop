@@ -34,6 +34,9 @@ internal static class JwtExtension
 				.UTF8.GetBytes(authSettings.JwtKey)),
 			};
 		});
+
+		services.AddScoped<IRefreshTokenService,RefreshTokenService>();	
+
 		return services;
 	}
 }

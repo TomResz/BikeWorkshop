@@ -13,6 +13,7 @@ public class BikeWorkshopDbContext : DbContext
     public DbSet<Service> Services { get; set; }
     public DbSet<ServiceToOrder> ServiceToOrders { get; set; }
     public DbSet<Summary> Summaries { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
     public BikeWorkshopDbContext(DbContextOptions<BikeWorkshopDbContext> options) : base(options)
     {
     }

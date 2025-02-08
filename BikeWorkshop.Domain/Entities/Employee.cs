@@ -11,4 +11,5 @@ public class Employee
     public string PasswordHash { get; set; }
     public int RoleId { get; set; } = (int)Roles.Worker;
     public Role Role { get; set; }
+    public ICollection<RefreshToken> RefreshTokens { get; set; }
 }

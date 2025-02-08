@@ -36,7 +36,15 @@ public class EmployeeRepository : IEmployeeRepository
 			.FirstOrDefaultAsync(x => x.Id == id);
 	}
 
-	public async Task Register(Employee employee)
+	public async Task<Employee?> GetByIdAndRefreshTokenAsync(Guid id, string refreshToken)
+		=> await _context.Employees
+		.Include(x=> x.Role)
+		.Include(x => x.RefreshTokens)
+		.Where(x => x.Id == id &&
+			x.RefreshTokens.Any(x => x.Token == refreshToken))
+		.FirstOrDefaultAsync();
+
+    public async Task Register(Employee employee)
 	{
 		await _context 
 			.Employees 

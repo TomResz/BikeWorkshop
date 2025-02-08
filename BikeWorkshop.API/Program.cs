@@ -1,6 +1,7 @@
 using BikeWorkshop.API.Extensions;
 using BikeWorkshop.API.SwaggerDoc;
 using BikeWorkshop.Application;
+using BikeWorkshop.Domain.Entities;
 using BikeWorkshop.Infrastructure;
 using BikeWorkshop.Shared;
 using Serilog;
@@ -26,6 +27,17 @@ AnsiConsole.Write(new FigletText("BikeWorkshop API")
 	.LeftJustified()
 	.Color(Color.Green));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -34,6 +46,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+app.UseCors("AllowAll");
 app.UseShared();
 app.UseHttpsRedirection();
 app.UseAuthorization();

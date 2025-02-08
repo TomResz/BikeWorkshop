@@ -13,6 +13,7 @@ internal static class RepositoryExtension
 			.AddScoped<IClientDataRepository, ClientDataRepository>()
 			.AddScoped<IServiceRepository, ServiceRepository>()
 			.AddScoped<IServiceToOrderRepository,ServiceToOrderRepository>()
-			.AddScoped<ISummaryRepository,SummaryRepository>();
+			.AddScoped<ISummaryRepository,SummaryRepository>()
+			.AddScoped<IRefreshTokenRepository,RefreshTokenRepository>();
 
 }

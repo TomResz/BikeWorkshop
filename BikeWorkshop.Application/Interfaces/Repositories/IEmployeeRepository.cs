@@ -8,5 +8,6 @@ public interface IEmployeeRepository
 	Task<Employee?> GetByEmail(string email);
 	Task Update(Employee employee);
 	Task<Employee?> GetById(Guid id);
-	Task<List<Employee>> GetAll();	
+	Task<List<Employee>> GetAll();
+    Task<Employee?> GetByIdAndRefreshTokenAsync(Guid id, string refreshToken);
 }

@@ -1,84 +1,97 @@
-﻿using BikeWorkshop.Shared.Exceptions;
+﻿using BikeWorkshop.Shared.Errors;
+using BikeWorkshop.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Error = BikeWorkshop.Shared.Errors.Error;
 
 namespace BikeWorkshop.Shared.MiddleWare;
 
 public class ExceptionMiddleware : IMiddleware
 {
-	private readonly ILogger<ExceptionMiddleware> _logger;
+    private readonly ILogger<ExceptionMiddleware> _logger;
 
-	public ExceptionMiddleware(ILogger<ExceptionMiddleware> logger)
-	{
-		_logger = logger;
-	}
+    public ExceptionMiddleware(ILogger<ExceptionMiddleware> logger)
+    {
+        _logger = logger;
+    }
 
-	public async Task InvokeAsync(HttpContext context, RequestDelegate next)
-	{
-		context.Response.ContentType = "application/json";
-		try
-		{
-			await next.Invoke(context);
-		}
-		catch (NotFoundException ex)
-		{
-			await HandleException(context, ex, 404);
-		}
-		catch (BadRequestException ex)
-		{
-			await HandleException(context, ex, 400);
-		}
-		catch(UnauthorizedException ex)
-		{
-			await HandleException(context, ex,401);
-		}
-		catch (Exception ex)
-		{
-			await HandleException(context, ex, 500);
-		}
-	}
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    {
+        try
+        {
+            await next.Invoke(context);
+        }
+        catch (ValidationException ex)
+        {
+            await HandleValidationException(context, ex, 400);
+        }
+        catch (BadRequestException ex)
+        {
+            await HandleAnotherExceptions(context, ex, 400);
+        }
+        catch (UnauthorizedException ex)
+        {
+            await HandleAnotherExceptions(context, ex, 401);
+        }
+        catch (NotFoundException ex)
+        {
+            await HandleAnotherExceptions(context, ex, 404);
+        }
+        catch (Exception ex)
+        {
+            await HandleAnotherExceptions(context, ex, 500);
+        }
+    }
 
-	private async Task HandleException(HttpContext context, Exception ex, int statusCode)
-	{
-		_logger.LogError($"{GetLogMessage(ex, statusCode)}");
+    private async Task HandleValidationException(HttpContext context, ValidationException ex, int statusCode)
+    {
+        var errors = ex.Errors;
+        var errorObject = new ErrorWithValidationParameters
+        {
+            Code = statusCode,
+            Type = "Validation Error",
+            Errors = errors
+        };
+        _logger.LogError("Exception occurred: {Message} {@Errors} {@Exception} ", errorObject.Type, errors, ex);
+        var content = System.Text.Json.JsonSerializer.Serialize(errorObject);
+        await WriteMessageAsync(context, content, statusCode);
 
-		context.Response.StatusCode = statusCode;
-		if (string.IsNullOrEmpty(ex.Message))
-		{
-			await context.Response.WriteAsync("");
-			return;
-		}
+    }
+    private async Task HandleAnotherExceptions(HttpContext context, Exception ex, int statusCode)
+    {
+        var error = ex.Message;
 
-		if ( IsJson(ex.Message))
-		{
-			await context.Response.WriteAsync(ex.Message);
-			return;
-		}
-		await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new { error = ex.Message }));
+        var errorType = statusCode switch
+        {
+            400 => "Bad Request",
+            404 => "Not Found",
+            _ => "Internal Server Error"
 
-	}
+        };
+        var errorObject = new Error
+        {
+            Code = statusCode,
+            Type = errorType,
+            Message = error
+        };
+        _logger.LogError("Exception occurred: {Message} {@Errors} {@Exception} ", errorType, error, ex);
 
-	private bool IsJson(string value)
-	{
-		try
-		{
-			JToken.Parse(value);
-			return true;
-		}
-		catch (JsonReaderException)
-		{
-			return false;
-		}
-		catch(Exception)
-		{
-			return false;
-		}
-	}
+        if (statusCode == StatusCodes.Status500InternalServerError)
+        {
+            _logger.LogError($"Critical error stack trace: {ex.StackTrace}.");
+        }
 
-	private string GetLogMessage(Exception ex, int statusCode) 
-		=> statusCode == 500
-			? $"Internal Server Error: {ex.Message}"
-			: $"Error {statusCode}: {ex.Message}";
+        var content = System.Text.Json.JsonSerializer.Serialize(errorObject);
+        await WriteMessageAsync(context, content, statusCode);
+
+    }
+
+    private static async Task WriteMessageAsync(HttpContext context, string content, int statusCode)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
+        await context.Response.WriteAsync(content);
+    }
+
 }
+

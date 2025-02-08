@@ -1,5 +1,7 @@
 ﻿using BikeWorkshop.Application.Functions.DTO;
+using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.RefreshToken;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.Register;
+using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.Revoke;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.SignIn;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Commands.UpdatePassword;
 using BikeWorkshop.Application.Functions.EmployeeFunctions.Queries.GetEmployees;
@@ -75,7 +77,7 @@ public class EmployeeController : ControllerBase
 	public async Task<ActionResult<string>> Login(SignInCommand command)
 	{
 		var response = await _mediator.Send(command);
-		return Ok(response.Token);
+		return Ok(response);
 	}
 
 	/// <summary>
@@ -84,7 +86,7 @@ public class EmployeeController : ControllerBase
 	/// <param name="command">The command containing the new password and password confirmation</param>
 	/// <response code="204">If password was changed.</response>
 	/// <response code="400">If password or confirmation password validation failed.</response>
-	[HttpPut("update_password")]
+	[HttpPost("update-password")]
 	[Authorize(Roles ="Manager,Worker")]
 	[SwaggerResponse(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
@@ -93,5 +95,21 @@ public class EmployeeController : ControllerBase
 	{
 		await _mediator.Send(command);
 		return NoContent();
+	}
+
+
+	[HttpPost("revoke")]
+    [Authorize(Roles = "Manager,Worker")]
+    public async Task<IActionResult> Revoke(RevokeTokenCommand command)
+	{
+		await _mediator.Send(command);
+		return NoContent();
+	}
+
+	[HttpPost("refresh-token")]
+    public async Task<ActionResult<JwtDto>> RefreshToken(RefreshTokenCommand command)
+	{
+		var result = await _mediator.Send(command);
+		return Ok(result);
 	}
 }

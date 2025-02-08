@@ -9,7 +9,8 @@ public static class ServiceExtensions
 {
 	public static IServiceCollection AddCommonsServices(this IServiceCollection services)
 	{
-		var dbContextOpt = services.SingleOrDefault(
+        Environment.SetEnvironmentVariable("APITest", "true");
+        var dbContextOpt = services.SingleOrDefault(
 	s => s.ServiceType == typeof(DbContextOptions<BikeWorkshopDbContext>))!;
 		services.Remove(dbContextOpt);
 

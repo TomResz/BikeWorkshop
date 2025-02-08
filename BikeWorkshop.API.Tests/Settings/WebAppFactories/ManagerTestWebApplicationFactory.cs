@@ -13,7 +13,7 @@ public class ManagerTestWebApplicationFactory<TStartup>
 	{
 		builder.ConfigureServices(services =>
 		{
-			services.AddCommonsServices();
+            services.AddCommonsServices();
 			services.AddSingleton<IPolicyEvaluator, FakeManagerPolicyEvaluator>();
 		});
 	}
